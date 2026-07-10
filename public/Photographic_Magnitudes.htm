@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Photographic Magnitudes -- Bangalore Astronomical Society (old pages)</title>
+  <script src="/assets/js/bas-theme.js"></script>
+  <link rel="stylesheet" href="/assets/css/bas-site.css">
+</head>
+
+<body class="bas-page bas-page--historic bas-page--legacy">
+<!-- BAS_GLOBAL_NAV_START -->
+<nav class="bas-site-nav" aria-label="BAS site sections">
+  <div class="bas-site-nav__inner">
+    <a class="bas-site-nav__brand" href="/">Bangalore Astronomical Society</a>
+    <div class="bas-site-nav__links">
+      <a href="/">Home</a>
+      <a href="/tools/">Tools</a>
+      <a href="/policy/">Policy</a>
+      <a href="/historic/" aria-current="page">Historic</a>
+      <a href="/pages/">Pages</a>
+    </div>
+    <button class="bas-theme-toggle" type="button" data-bas-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode"><span class="bas-theme-toggle__icon" aria-hidden="true">&#9790;</span></button>
+  </div>
+</nav>
+<!-- BAS_GLOBAL_NAV_END -->
+<main class="bas-page__main">
+
+
+  <h1>Photographic Magnitudes</h1><br />
+   <hr />
+By akarshsimha; Published 02 Mar 2007<br />
+<br />
+<p>When I say &quot;Photographic Magnitude&quot; here... I refer to a magnitude value obtained from a photograph. More accurately a photographic magnitude estimate. I am not talking about a Blue Magnitude...  Instead, I am talking of a magnitude that actually depends on the spectral response of the CCD / film that was used to take it. </p><p>This might be a rather bad estimate for astrophysical purposes, but it gives atleast some value close to the visual (if the film is very good, maybe slide). So, atleast for stars with color indices close to zero, this may be accurate.</p><p>It was an excercise recommended by Dr. B.S. Shylaja, our astronomy teacher, who said - &quot;Instead of just taking photographs and leaving things at that, try to do something useful out of these&quot;. She explained how variable stars could actually be detected and how their light curves could be obtained, by periodically taking photographs. This was one of the methods in practice by professional astronomers, before the advent of effecient photomultiplier tubes and photosensors. </p><p>She explained to us how exactly it could be done. It is very simple and I guess it should work well. I wish to outline the procedure here, so that others can try it too:</p><p>Step 1: Get a photograph of a region of the sky. It is nice if you know the date / time at which the photo was taken.</p><p>Step 2: Scan and digitize. Scan with the best resolution possible. </p><p>Step 3: Open in any image editing / viewing software that allows zooming in</p><p>Step 4: Count the radius of the image of some stars of <em>known magnitude</em> in units of pixels.</p><p>Step 5: Plot a graph of size versus magnitude. Fit the central region of this graph to a straight line, either graphically, or by using <em>Linear Regression</em>, a statistical technique which generates the &quot;best fit&quot; line. </p><p>Step 6: Locate the star whose magnitude needs to be determined on the digitized photograph and find its pixel radius. </p><p>Step 7: Use the graph of image-size versus magnitude to find the unknown magnitude.</p><p>&nbsp;</p><p>I have written a program to automatically determine the pixel radii of stars. I still need to work on it so that it can automate the whole process.</p><p>I have not yet tried this method as yet, because my linear regression program was giving erreneous output. However, the program that automatically determines the pixel radii works pretty well</p><p>I will share the source once the program is completed and hosts a nice user interface.</p><p>It is currently written for Linux, esp. GNOME using GTK+ libraries. Anybody who is willing to port it to Windows is most welcome. Please let me know.</p>
+
+
+</main>
+</body>
+</html>
