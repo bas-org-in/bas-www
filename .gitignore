@@ -1,0 +1,7 @@
+/public/bootstrap/
+/public/font-awesome-4.7.0/
+
+# Large media pending an explicit Git LFS or external storage decision.
+/public/files/BASWinterAdvanced.pdf
+/public/files/BASWinterBeginner.pdf
+/public/files/BASWinterChallenge.pdf

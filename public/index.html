@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Homepage of Bangalore Astronomical Society">
+    <meta name="author" content="Bangalore Astronomical Society">
+    <link rel="shortcut icon" href="files/favicon.ico">
+
+    <title>Bangalore Astronomical Society &middot; Home</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+    <link href="style.css" rel="stylesheet">
+
+    <style>
+      #currentEvent {
+	  background-color: #ddcccc;
+	  color: black;
+	  font-size: 28px;
+	  display: none;
+      }
+      #currentEvent a {
+	  color: blue;
+      }
+    </style>
+    <script>
+      function currentEventUntil(targetDate) {
+        const currentDate = new Date();
+        const endDate = new Date(targetDate);
+
+        // Check if current date is less than the target date
+        if (currentDate < endDate) {
+            document.getElementById('currentEvent').style.display = 'block';
+        } else {
+            document.getElementById('currentEvent').style.display = 'none';
+        }
+    }
+    </script>
+
+    <script src="/assets/js/bas-theme.js"></script>
+    <link rel="stylesheet" href="/assets/css/bas-site.css">
+</head>
+
+  <body class="bas-page bas-page--wide">
+<!-- BAS_GLOBAL_NAV_START -->
+<nav class="bas-site-nav" aria-label="BAS site sections">
+  <div class="bas-site-nav__inner">
+    <a class="bas-site-nav__brand" href="/">Bangalore Astronomical Society</a>
+    <div class="bas-site-nav__links">
+      <a href="/" aria-current="page">Home</a>
+      <a href="/tools/">Tools</a>
+      <a href="/policy/">Policy</a>
+      <a href="/historic/">Historic</a>
+      <a href="/pages/">Pages</a>
+    </div>
+    <button class="bas-theme-toggle" type="button" data-bas-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode"><span class="bas-theme-toggle__icon" aria-hidden="true">&#9790;</span></button>
+  </div>
+</nav>
+<!-- BAS_GLOBAL_NAV_END -->
+<main class="bas-page__main">
+
+
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <div class="row">
+          <br />
+          <br />
+          <div class="col-md-2">
+            <img src="/files/bas_logo.png"
+                 align="left">
+          </div>
+          <div class="col-md-10">
+            <br />
+            <p>
+              Welcome to <strong>Bangalore Astronomical Society</strong>!<br />We are a group of volunteers working for the promotion of
+              astronomy as a hobby as well as a science.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--
+	<div class="container">
+	  <div class="page-header">
+            <h1>Join us!</h1>
+	  </div>
+	  <div class="well">
+            <p>
+              Our primary channel of communication is through our very
+              active Google Group:</p>
+            <p><a class="btn btn-primary btn-lg" role="button">Join our
+		Google group! &raquo;</a></p>
+	  </div>
+	</div>
+	-->
+	<div class="container">
+	  <div class="container">
+	    <div class="row">
+	      <div class="col-md-12">
+		<h2 align="center">
+		  <a target="_blank" rel="noopener noreferrer" href="https://forms.gle/JaR5zvzxZGHtwz6PA"><i class="fa fa-telegram" aria-hidden="true"></i><!-- Telegram--></a>&nbsp;&nbsp;
+		  <a target="_blank" rel="noopener noreferrer" href="https://instagram.com/bas.org.in"><i class="fa fa-instagram" aria-hidden="true"></i><!-- bas.org.in--></a>&nbsp;&nbsp;
+		  <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/b_a_s"><i class="fa fa-twitter" aria-hidden="true"></i><!-- b_a_s--></a>&nbsp;&nbsp;
+		  <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/@b.a.s"><i class="fa fa-youtube-play" aria-hidden="true"></i><!-- @b.a.s--></a>&nbsp;&nbsp;
+		  <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/b-a-s"><i class="fa fa-google" aria-hidden="true"></i><!-- b-a-s--></a>
+		</h2>
+	      </div>
+	    </div>
+	    <div class="row">
+	      <div class="col-md-12" id="currentEvent">
+		Currently Live: September 21, 2024<br />Astronomy Workshop for Enthusiasts : YouTube livestream <a href="https://www.youtube.com/live/VoVNLAoL-H4?si=caTQGzxmdx_mylQ4">here</a>!<br />
+		</div>
+    <script>currentEventUntil('2024-09-21T23:59:59');</script>
+</div>
+	    <div class="row">
+              <div class="col-md-4">
+		<h2>What we do</h2>
+		<p>Check out this <a href="/files/BAS_Overview.pdf">presentation</a> to learn more about BAS activities and what our members do.</p>
+		<p>We
+		  <ul class="fa-ul">
+		    <li><i class="fa-li fa fa-star"></i>provide an online platform for astronomy enthusiasts,</li>
+		    <li><i class="fa-li fa fa-star"></i>conduct star parties at dark sites,</li>
+		    <li><i class="fa-li fa fa-star"></i>conduct public outreach programmes in and around Bangalore,</li>
+		    <li><i class="fa-li fa fa-star"></i>engage with the public through both traditional and social media to promote astronomy,</li>
+		    <li><i class="fa-li fa fa-star"></i>organize lectures (both online and offline) to enhance our fellow hobbyists' knowledge.</li>
+		  </ul>
+		</p>
+	      </div>
+              <div class="col-md-4">
+		<h2>Join the discussion!</h2>
+		<p>We do not have formal memberships. Our primary channels
+		  of communication are our
+		  <b>Telegram Group</b> and <b>Google Groups</b>. All are welcome to join them.</p>
+		<p>The chat groups are very active! <!--They can be accessed
+							from Telegram, Matrix and Discord, but for the best
+							experience, <i>join via Telegram</i>. -->You do not have to
+		  be in Bangalore, or even in India to join! Feel free to
+		  post your questions about the universe, astronomy,
+		  telescopes, star-gazing, observing, astrophotography
+		  etc. in either group.</p>
+		<p> <strong>Watch out for event announcements pinned on the Telegram group and posted to
+		    the Google group.</strong></p>
+		<p><a class="btn btn-default" href="https://groups.google.com/forum/#!forum/b-a-s" role="button">Join
+		    our Google Group! &raquo;</a></p>
+		<p><a class="btn btn-primary" href="https://forms.gle/JaR5zvzxZGHtwz6PA" role="button"><i class="fa fa-telegram"></i> Join
+		    us on Telegram<!-- / Discord -->! &raquo;</a></p>
+		<p>To fight spam, we require that you fill out a form to obtain the Telegram<!--/Discord--> link. We apologize for this inconvenience.</p>
+
+              </div>
+              <!--
+		  <div class="col-md-4">
+		    <h2>Upcoming Events</h2>
+		    <p>There are no official events currently planned. However,
+		      whenever the skies are clear, members tend to organize
+		      unofficial observing sessions and the like. Join our Google
+		      group to keep track of such events.</p>
+		  </div>
+		  -->
+		  <div class="col-md-4">
+		    <h2>Star Parties</h2>
+		    <p>We orchestrate excursions to the dark skies of Coorg during the clear new moon periods, usually <strong>December — March</strong>, where we share the joy of being under a dark sky and looking at deep-sky objects through powerful telescopes!</p>
+		    <p>Our extremely popular star parties are entirely volunteer-driven and not-for-profit. <strong>Pre-registration is announced on our Telegram group</strong>, about 2—3 weeks in advance. Spots are limited by accommodation capacity and the weekend nights generally get booked out very quickly!</p>
+		    <p>To get an idea of what happens at a star party, take a look at <a href="https://www.youtube.com/watch?v=1UpTnL86zyQ">this <i class="fa fa-youtube-play"></i> video</a>.</p>
+		  </div>
+	    </div>
+	    <div class="row">
+              <div class="col-md-4">
+		<h2>Astronomy Webinars!</h2>
+		<p>BAS conducted many webinars to enable people to make productive use of times during COVID-19 lockdowns. The webinars have been recorded and posted on our YouTube channel.</p>
+		<p><a class="btn btn-primary" href="https://www.youtube.com/channel/UCuapX5HZbVxJSbJS8I_2ulA" role="button"><i class="fa fa-youtube-play"></i> Visit our YouTube channel! &raquo;</a></p>
+		<p>Some video recordings are featured below.</p>
+		<p>If you are interested in attending these sessions live, check our <a href="https://groups.google.com/forum/#!forum/b-a-s">Google Group</a> for notifications and details on how to join! <b>They are free and no registration is necessary.</b></p>
+              </div>
+              <!--<div class="col-md-4">
+		<h2>Observing programs</h2>
+		<p>BAS has announced a certificate program for visual
+		  observers. Observe 55 of the <a href="http://messier.seds.org/">Messier objects</a> to earn a
+		  certificate! This is to be treated as a motivational thing and a way to encourage logging of observations, rather than focusing on the certificate.</p>
+		<p><a class="btn btn-default" href="https://groups.google.com/forum/?fromgroups=#!topic/b-a-s/yqYkrd5wbBM" role="button">Learn more &raquo;</a></p>
+		<p>You may download logbooks designed specifically for BAS certifications for free. There are also Logbooks for other catalogs and projects. See <a href="/tools/logbooks/">the Logbook project</a> for more details. Choose the A4 size to get the logbooks designed for BAS.</p>
+		<p><a class="btn btn-default" href="/tools/logbooks/downloads.html" role="button">Download Log-books</a></p>
+              </div>-->
+              <div class="col-md-4">
+		<h2>Call for volunteers</h2>
+		<p>BAS needs your help to grow! We are always looking for
+		  volunteers to help with various activities.</p>
+		<p>If you wish to volunteer, please indicate your interest on the Telegram group and an admin will help you out.</p>
+              </div>
+	    </div>
+	  </div>
+
+	  <div class="container">
+	    <div class="page-header">
+	      <h1>Featured videos</h1>
+	      We have a lot of astronomy content on our <a href="https://www.youtube.com/channel/UCuapX5HZbVxJSbJS8I_2ulA">YouTube</a> channel. Check it out for more such videos!
+	    </div>
+	    <div class="row">
+	      <div class="col-md-4">
+		<iframe src="https://www.youtube.com/embed/Wi-Ls55Yvzs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br />
+		Know Your Stars: An introduction to the night sky for newbie amateur astronomers.
+	      </div>
+	      <div class="col-md-4">
+		<iframe src="https://www.youtube.com/embed/_5e-aLoL9Tg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br />
+		Simple Experiments that Tell a Lot: Experiments in Physics and Astronomy that had massive contributions to our understanding of the universe.
+	      </div>
+	      <div class="col-md-4">
+		<iframe src="https://www.youtube.com/embed/VHBu1s0GWjs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br />
+		How to Photograph Planets: Equipment, Techniques & More	  
+	      </div>
+	    </div>
+	    <div class="page-header">
+	      Here's what our events are like:
+	    </div>
+	    <div class="row">
+	      <div class="col-md-4">
+		<iframe src="https://www.youtube.com/embed/6HMywLz3M74" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br />
+		Outreach Session for Rural School Students
+	      </div>
+	      <div class="col-md-4">
+		<iframe src="https://www.youtube.com/embed/AKbw93nj1r4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br />
+		Activities for <a href="https://www.iiap.res.in">Indian Institute of Astrophysics</a>' National Science Day celebrations
+	      </div>
+	      <div class="col-md-4">
+		<iframe src="https://www.youtube.com/embed/1UpTnL86zyQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br />
+		BAS Star Party preview!
+	      </div>
+	    </div>
+	  </div>
+	  <div class="container">
+	    <div class="page-header">
+	      <h1>Gallery</h1>
+	      Selected photos of the night sky shot by Bangaloreans and friends, and of events by BAS and its members. All pictures are used with permission of the creator.
+	      <p><a class="btn btn-primary" href="/gallery/">Open the editable BAS gallery</a></p>
+	    </div>
+	    <div class="row">
+              <div class="col-md-4">
+		<img src="https://i.imgur.com/jfPR6LO.jpg" width=300/><br />
+		Star trails around the north pole as seen behind Pumori mountain (7161m) from Gorakshep, Nepal (5164m).<br />
+		Copyright &copy; 2020 Keerthi Kiran.<br />
+	      </div>
+              <div class="col-md-4">
+		<img src="https://i.imgur.com/RFcsrSm.jpg" width=300/><br />
+		Sightseeing after a star party in Hampi, ca. 2008.<br />
+		Copyright &copy; 2008 Naveen Nanjundappa.<br />
+	      </div>
+              <div class="col-md-4">
+		<img src="http://1.bp.blogspot.com/-DJnsaPTWW8c/U1qkM3HhB8I/AAAAAAAAM_o/NS8VcL2ZR0I/s1600/M78_Barnards_Loop_Final+(1500).jpg" width=300/><br />
+		Reflection nebula <a href="https://en.wikipedia.org/wiki/Messier_78">M78</a>, and <a href="https://en.wikipedia.org/wiki/Barnard%27s_Loop">Barnard's Loop</a> (emission nebula). Shot from Koratagere and Coorg<br />
+		Copyright &copy; 2014 Subhankar Saha.<br />
+	      </div>
+	    </div>
+	    <br />
+	    <div class="row">
+              <div class="col-md-4">
+		<img src="https://i.imgur.com/0g7PySF.jpg" width=300/><br />
+		Public viewing of the Venus Transit of 2012<br />
+		Copyright &copy; 2012 Keerthi Kiran.<br />
+	      </div>
+              <div class="col-md-4">
+		<img src="https://lh3.googleusercontent.com/pw/ACtC-3c5y0puHxWi9ERulVG05-Ga781hBPCZS8l5mj3gCTfhGbW_zZNpcoiqL_8ubYduWB6QEiy-dgx5dK_S0vJOIrvXGRak-MJMv-PbOjuLHERPDy1EAk7lXma9pJKAtBBWez2vfA9ndkAFvycucO8juuJ5=w1170-h828-no?authuser=0" width=300 /><br />
+		Glowing hydrogen gas in the <a href="https://en.wikipedia.org/wiki/IC_2177">Seagull Nebula</a>, shot from Bangalore.<br />
+		Copyright &copy; 2020 Vishwanath S K.<br />
+	      </div>
+              <div class="col-md-4">
+		<img src="https://i.imgur.com/36Lcrzc.jpg" width=300/><br />
+		<a href="https://en.wikipedia.org/wiki/Ronchi_test">Ronchi test</a> of a SkyWatcher 8" f/4 mirror.<br />
+		Copyright &copy; 2020 Keerthi Kiran.<br />
+	      </div>
+	    </div>
+	  </div>
+	  <br />
+	  <div class="row">
+	    <div class="col-md-4">
+	      <img src="https://i.imgur.com/hc0aqZ9.jpg" width=300 /><br />
+	      The winter Milky Way, shot from Talakaveri, Coorg.<br />
+	      Copyright &copy; 2020 Udayan Pandharipande.<br />
+	    </div>
+            <div class="col-md-4">
+	      <img src="https://i.imgur.com/2nFSUCu.jpg" width=300 /><br />
+	      Star party at Coorg in February 2020.<br />
+	      Copyright &copy; 2020 Subhankar Saha.<br />
+	    </div>
+            <div class="col-md-4">
+	      <img src="files/Prabhu_Helix.jpg" width=300 /><br />
+	      <a href="https://en.wikipedia.org/wiki/Helix_Nebula">Helix nebula</a> in HOO palette (shows emissions from Hydrogen and Oxygen gas).<br />
+	      Copyright &copy; 2020 <a href="https://prabhuastrophotography.com/">Prabhakaran S. Kutti</a>.<br />
+	    </div>
+	  </div>
+
+	  <!--   <div class="col-md-12"> -->
+	    <!--     <h2>BAS conducted an outreach session in Gokarna</h2> -->
+	    <!--     <p>(April 2017) BAS conducted an outreach session in a Government high school in Gokarna.<br /> -->
+	      <!-- 	  <iframe width="336" height="189" src="https://www.youtube.com/embed/N4rioS39mJE" frameborder="0" allowfullscreen></iframe> -->
+	      <!-- 	</p> -->
+	    <!--   </div> -->
+	  <!--   <div class="col-md-12"> -->
+	    <!--     <h2>BAS conducted an outreach session at IIM Bangalore</h2> -->
+	    <!-- 	<p>(April 2017) BAS conducted an outreach session for the faculty of IIM Bangalore and their family. The crowd consisted of Professors of IIMB, their spouses as well as their kids, spanning a very wide range in age as well as knowledge of the sky.</p> -->
+	    <!--     <p><a class="btn btn-default" href="https://groups.google.com/forum/#!topic/b-a-s/wBIoKUKkQD4" role="button">Read more &raquo;</a></p> -->
+	    <!--   </div> -->
+	  <!--   <div class="col-md-12"> -->
+	    <!--     <h2>Bangalorean wins accolades at Texas Star Party</h2> -->
+	    <!--     <p>(June 2014) Young Bangalorean Santhosh Surendra attended -->
+	      <!--       the Texas Star Party 2014 held at the Prude Ranch, Texas, -->
+	      <!--       USA. He was the farthest attendee and won an award for his -->
+	      <!--       sketch of lunar craters, and also earned two observing pins -->
+	      <!--       for his deep-sky observations. BAS volunteers are proud to -->
+	      <!--       have mentored him at the astronomy workshop at Coorg. Six -->
+	      <!--       months after his first experience observing under dark skies -->
+	      <!--       at Coorg, he was already ready to observe from some of the -->
+	      <!--       darkest skies in the world.</p> -->
+	    <!--     <p><a class="btn btn-default" href="https://groups.google.com/forum/#!topic/b-a-s/6G0B_Xaexy8" role="button">Read more &raquo;</a></p> -->
+	    <!--   </div> -->
+	  <!--   <div class="col-md-12"> -->
+	    <!--     <h2>BAS conducted an astronomy workshop at Coorg</h2> -->
+	    <!--     <p>(December 2013) BAS conducted an astronomy workshop under -->
+	      <!--       the dark skies of Coorg. About 50 people observed and -->
+	      <!--       photographed the sky through about 25 telescopes! The trip -->
+	      <!--       produced some very good astrophotographs and some very deep -->
+	      <!--       observations, probably for the first time ever from Indian soil!</p> -->
+	    <!--     <p><a href="http://nakshatralok.blogspot.com/2014/01/dec-2013-bas-workshopstar-party.html">See the video time-lapse made by Subhankar Saha!</a></p> -->
+	    <!--     <p><a class="btn btn-default" href="https://groups.google.com/forum/#!topic/b-a-s/fcDdmEr6WDA" role="button">Read reports &raquo;</a></p> -->
+	    <!--   </div> -->
+	  <!-- </div> -->
+
+	<hr />
+  
+  <div align="right"><a href="/policy/Privacy_Policy.html">Privacy Policy</a> | <a href="/policy/Terms and Conditions.html">Terms and Conditions</a> | <a href="/policy/Shipping_and_delivery.html">Shipping and Delivery</a> | <a href="/policy/Cancellation_and_refund.html">Cancellation and Refund Policy</a> | <a href="/policy/Contact_us.html">Contact Us</a></div><br />
+  <div align="right">Last updated: March 2024</div>
+</main>
+</body>
+</html>
