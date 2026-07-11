@@ -8,8 +8,8 @@ on:
         required: true
         type: boolean
         default: true
-      include_pdfs:
-        description: Upload PDF files with the site payload
+      include_large_pdfs:
+        description: Upload large winter PDF files with the site payload
         required: true
         type: boolean
         default: false
@@ -37,7 +37,7 @@ jobs:
       REMOTE_USER: ${{ secrets.BAS_BIGROCK_USER }}
       REMOTE_PATH: ${{ secrets.BAS_BIGROCK_REMOTE_PATH }}
       SSH_KEY: ${{ secrets.BAS_BIGROCK_SSH_KEY }}
-      BAS_INCLUDE_PDFS: ${{ inputs.include_pdfs && '1' || '0' }}
+      BAS_INCLUDE_LARGE_PDFS: ${{ inputs.include_large_pdfs && '1' || '0' }}
       BAS_INSTALL_VENDOR: ${{ inputs.deploy_vendor && '1' || '0' }}
       DEPLOY_DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
 

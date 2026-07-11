@@ -8,15 +8,15 @@ fi
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 deploy_root="$1"
-include_pdfs="${BAS_INCLUDE_PDFS:-0}"
+include_large_pdfs="${BAS_INCLUDE_LARGE_PDFS:-${BAS_INCLUDE_PDFS:-0}}"
 install_vendor="${BAS_INSTALL_VENDOR:-1}"
 vendor_source="${BAS_VENDOR_SOURCE:-}"
 node_modules_root="${BAS_NODE_MODULES:-$repo_root/node_modules}"
 
-case "$include_pdfs" in
+case "$include_large_pdfs" in
   0|1) ;;
   *)
-    echo "BAS_INCLUDE_PDFS must be 0 or 1" >&2
+    echo "BAS_INCLUDE_LARGE_PDFS must be 0 or 1" >&2
     exit 2
     ;;
 esac
@@ -36,8 +36,11 @@ fi
 mkdir -p "$deploy_root"
 rsync -a "$repo_root/public/" "$deploy_root/"
 
-if [ "$include_pdfs" = "0" ]; then
-  find "$deploy_root" -type f -iname '*.pdf' -delete
+if [ "$include_large_pdfs" = "0" ]; then
+  rm -f \
+    "$deploy_root/files/BASWinterAdvanced.pdf" \
+    "$deploy_root/files/BASWinterBeginner.pdf" \
+    "$deploy_root/files/BASWinterChallenge.pdf"
 fi
 
 copy_dir() {

@@ -21,7 +21,7 @@ The workflow:
 The workflow defaults to:
 
 - `dry_run: true`
-- `include_pdfs: false`
+- `include_large_pdfs: false`
 - `deploy_vendor: true`
 
 Run the default dry run first. Review the rsync itemized changes in the Actions
@@ -59,17 +59,19 @@ deploy.
 
 ## PDFs
 
-PDF uploads are disabled by default because the winter PDFs are large and are
-managed separately. Enable `include_pdfs` only when the site PDFs intentionally
-need to be refreshed from this repo.
+Normal site PDFs, including the overview presentation and membership form, are
+included in the default deploy. The large winter PDFs are excluded by default
+because they are managed separately. Enable `include_large_pdfs` only when those
+large files intentionally need to be refreshed from this repo.
 
 ## Local Deploy Tree Check
 
 To validate the deploy assembly locally without contacting BigRock:
 
 ```sh
-BAS_INCLUDE_PDFS=0 scripts/prepare-deploy.sh /tmp/bas-www-deploy
+BAS_INCLUDE_LARGE_PDFS=0 scripts/prepare-deploy.sh /tmp/bas-www-deploy
 test -f /tmp/bas-www-deploy/index.html
+test -f /tmp/bas-www-deploy/files/BAS_Overview.pdf
 test -f /tmp/bas-www-deploy/bootstrap/css/bootstrap.min.css
 test -f /tmp/bas-www-deploy/font-awesome-4.7.0/css/font-awesome.min.css
 ```
