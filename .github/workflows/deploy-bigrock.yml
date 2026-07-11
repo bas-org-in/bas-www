@@ -1,0 +1,126 @@
+name: Deploy BAS main site to BigRock
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Run rsync without changing the remote tree
+        required: true
+        type: boolean
+        default: true
+      include_pdfs:
+        description: Upload PDF files with the site payload
+        required: true
+        type: boolean
+        default: false
+      deploy_vendor:
+        description: Include Bootstrap and Font Awesome vendor assets
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bas-www-bigrock-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy static site
+    runs-on: ubuntu-latest
+    environment: bas-bigrock
+
+    env:
+      REMOTE_HOST: ${{ secrets.BAS_BIGROCK_HOST }}
+      REMOTE_USER: ${{ secrets.BAS_BIGROCK_USER }}
+      REMOTE_PATH: ${{ secrets.BAS_BIGROCK_REMOTE_PATH }}
+      SSH_KEY: ${{ secrets.BAS_BIGROCK_SSH_KEY }}
+      BAS_INCLUDE_PDFS: ${{ inputs.include_pdfs && '1' || '0' }}
+      BAS_INSTALL_VENDOR: ${{ inputs.deploy_vendor && '1' || '0' }}
+      DEPLOY_DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+
+      - name: Install vendor packages
+        if: ${{ inputs.deploy_vendor }}
+        run: npm install --prefix "$RUNNER_TEMP/vendor" --no-audit --no-fund bootstrap@3.4.1 font-awesome@4.7.0
+
+      - name: Prepare deploy tree
+        run: BAS_NODE_MODULES="$RUNNER_TEMP/vendor/node_modules" scripts/prepare-deploy.sh "$RUNNER_TEMP/bas-www-deploy"
+
+      - name: Validate deploy configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          missing=0
+          for name in REMOTE_HOST REMOTE_USER REMOTE_PATH SSH_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "missing required secret-derived value: $name" >&2
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+          remote_path="${REMOTE_PATH%/}"
+          case "$remote_path" in
+            public_html|*/public_html) ;;
+            *)
+              echo "refusing deploy because REMOTE_PATH is not a public_html path" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+          printf '%s\n' "$SSH_KEY" > "$HOME/.ssh/bas_bigrock_deploy"
+          chmod 600 "$HOME/.ssh/bas_bigrock_deploy"
+          ssh-keyscan -H "$REMOTE_HOST" >> "$HOME/.ssh/known_hosts"
+
+      - name: Check remote target
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ssh \
+            -i "$HOME/.ssh/bas_bigrock_deploy" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            "$REMOTE_USER@$REMOTE_HOST" \
+            'test -d public_html && test -d "$HOME"'
+
+      - name: Sync site
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          remote_path="${REMOTE_PATH%/}"
+          rsync_args=(
+            -az
+            --itemize-changes
+            --exclude=.htaccess
+            --exclude=.well-known/
+            --exclude=cgi-bin/
+            --exclude=gallery/
+          )
+
+          if [ "$DEPLOY_DRY_RUN" = "1" ]; then
+            rsync_args+=(--dry-run)
+          fi
+
+          rsync "${rsync_args[@]}" \
+            -e "ssh -i $HOME/.ssh/bas_bigrock_deploy -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
+            "$RUNNER_TEMP/bas-www-deploy/" \
+            "$REMOTE_USER@$REMOTE_HOST:$remote_path/"
