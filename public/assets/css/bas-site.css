@@ -405,12 +405,12 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   color: var(--bas-jumbotron-text);
 }
 
-html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.png"] {
+html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.svg"] {
   filter: invert(1) brightness(1.18);
 }
 
 @media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) body.bas-page .jumbotron img[src="/files/bas_logo.png"] {
+  html:not([data-theme="light"]) body.bas-page .jumbotron img[src="/files/bas_logo.svg"] {
     filter: invert(1) brightness(1.18);
   }
 }
@@ -445,7 +445,7 @@ html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.png"] 
     padding: 24px 18px;
   }
 
-  body.bas-page .jumbotron img[src="/files/bas_logo.png"] {
+  body.bas-page .jumbotron img[src="/files/bas_logo.svg"] {
     display: block;
     float: none;
     margin: 0 auto 14px;
