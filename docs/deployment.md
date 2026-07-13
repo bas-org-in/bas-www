@@ -52,10 +52,12 @@ The sync does not use `rsync --delete`. It also excludes cPanel-managed paths:
 .well-known/
 cgi-bin/
 gallery/
+wp/
 ```
 
-This keeps certificate, CGI, and WordPress gallery files outside the static site
-deploy.
+This keeps certificate, CGI, and WordPress files outside the static site deploy.
+`gallery/` is the public WordPress gateway and `wp/` is the physical WordPress
+core/admin install.
 
 ## PDFs
 
