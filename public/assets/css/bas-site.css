@@ -187,6 +187,10 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   max-width: 100%;
 }
 
+.bas-lazy-media {
+  background: var(--bas-code-bg);
+}
+
 .bas-video-embed {
   aspect-ratio: 16 / 9;
   border: 0;
