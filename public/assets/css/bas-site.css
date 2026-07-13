@@ -187,6 +187,67 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   max-width: 100%;
 }
 
+.bas-video-embed {
+  aspect-ratio: 16 / 9;
+  border: 0;
+  height: auto;
+  max-width: 100%;
+  width: 100%;
+}
+
+.bas-video-lite {
+  aspect-ratio: 16 / 9;
+  background: #111820;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+
+.bas-video-lite img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.86;
+  width: 100%;
+}
+
+.bas-video-lite::before {
+  background: rgba(0, 0, 0, 0.68);
+  border-radius: 999px;
+  content: "";
+  height: 54px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: background 0.16s ease;
+  width: 54px;
+  z-index: 1;
+}
+
+.bas-video-lite::after {
+  border-bottom: 12px solid transparent;
+  border-left: 18px solid currentColor;
+  border-top: 12px solid transparent;
+  content: "";
+  left: calc(50% + 3px);
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.bas-video-lite:hover::before,
+.bas-video-lite:focus::before {
+  background: rgba(27, 95, 143, 0.92);
+}
+
 .bas-page :where(hr) {
   border: 0;
   border-top: 1px solid var(--bas-rule);
