@@ -14,6 +14,12 @@ html {
   --bas-control-text: #202124;
   --bas-button-bg: #1b5f8f;
   --bas-button-border: #164d74;
+  --bas-button-text: #fff;
+  --bas-button-hover-bg: #144b72;
+  --bas-button-secondary-bg: #f3f8fc;
+  --bas-button-secondary-border: #b7d8ec;
+  --bas-button-secondary-text: #174a6f;
+  --bas-button-secondary-hover-bg: #e3f0f8;
   --bas-nav-bg: #202124;
   --bas-nav-text: #fff;
   --bas-accent: #f2b84b;
@@ -41,8 +47,14 @@ html {
     --bas-control-border: #4a5962;
     --bas-control-bg: #151a1e;
     --bas-control-text: #e7e2d5;
-    --bas-button-bg: #256c9f;
-    --bas-button-border: #3f86ba;
+    --bas-button-bg: #83c5f4;
+    --bas-button-border: #b7dcff;
+    --bas-button-text: #101315;
+    --bas-button-hover-bg: #b7dcff;
+    --bas-button-secondary-bg: rgba(131, 197, 244, 0.14);
+    --bas-button-secondary-border: #3f86ba;
+    --bas-button-secondary-text: #b7dcff;
+    --bas-button-secondary-hover-bg: rgba(131, 197, 244, 0.24);
     --bas-nav-bg: #0f1113;
     --bas-nav-text: #f6f0df;
     --bas-nav-current: #f4d67d;
@@ -67,8 +79,14 @@ html[data-theme="dark"] {
   --bas-control-border: #4a5962;
   --bas-control-bg: #151a1e;
   --bas-control-text: #e7e2d5;
-  --bas-button-bg: #256c9f;
-  --bas-button-border: #3f86ba;
+  --bas-button-bg: #83c5f4;
+  --bas-button-border: #b7dcff;
+  --bas-button-text: #101315;
+  --bas-button-hover-bg: #b7dcff;
+  --bas-button-secondary-bg: rgba(131, 197, 244, 0.14);
+  --bas-button-secondary-border: #3f86ba;
+  --bas-button-secondary-text: #b7dcff;
+  --bas-button-secondary-hover-bg: rgba(131, 197, 244, 0.24);
   --bas-nav-bg: #0f1113;
   --bas-nav-text: #f6f0df;
   --bas-nav-current: #f4d67d;
@@ -185,6 +203,36 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   color: var(--bas-link-hover);
 }
 
+.bas-page :where(.btn) {
+  border-radius: 5px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.bas-page :where(.btn-primary) {
+  background-color: var(--bas-button-bg);
+  border-color: var(--bas-button-border);
+  color: var(--bas-button-text);
+}
+
+.bas-page :where(.btn-primary:hover, .btn-primary:focus, .btn-primary:active) {
+  background-color: var(--bas-button-hover-bg);
+  border-color: var(--bas-button-border);
+  color: var(--bas-button-text);
+}
+
+.bas-page :where(.btn-default) {
+  background-color: var(--bas-button-secondary-bg);
+  border-color: var(--bas-button-secondary-border);
+  color: var(--bas-button-secondary-text);
+}
+
+.bas-page :where(.btn-default:hover, .btn-default:focus, .btn-default:active) {
+  background-color: var(--bas-button-secondary-hover-bg);
+  border-color: var(--bas-button-secondary-border);
+  color: var(--bas-button-secondary-text);
+}
+
 .bas-page :where(img) {
   height: auto;
   max-width: 100%;
@@ -260,7 +308,7 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   background: var(--bas-button-bg);
   border: 1px solid var(--bas-button-border);
   border-radius: 5px;
-  color: #fff;
+  color: var(--bas-button-text);
   display: inline-flex;
   font-size: 0.92rem;
   font-weight: 600;
@@ -272,8 +320,8 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
 
 .bas-button:hover,
 .bas-button:focus {
-  background: var(--bas-link-hover);
-  color: #fff;
+  background: var(--bas-button-hover-bg);
+  color: var(--bas-button-text);
   text-decoration: none;
 }
 
@@ -527,7 +575,7 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   background: var(--bas-button-bg);
   border: 1px solid var(--bas-button-border);
   border-radius: 4px;
-  color: #fff;
+  color: var(--bas-button-text);
   padding: 6px 12px;
 }
 
