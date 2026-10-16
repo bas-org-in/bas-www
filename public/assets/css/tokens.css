@@ -1,0 +1,274 @@
+/*
+ * BAS design tokens.
+ *
+ * This is the only BAS stylesheet that may hold raw colours, tints, radii,
+ * font weights, shadows, font sizes, spacing values and control sizes.
+ * Every other stylesheet uses these values through var(--bas-...).
+ * The file holds only custom properties, so it can load on any page.
+ * Stylelint enforces this (.stylelintrc.json).
+ *
+ * WordPress loads this file from https://bas.org.in/assets/css/tokens.css.
+ * To add a value, add a token here first, with a comment that gives its
+ * role.
+ */
+
+:root {
+  /* Surfaces and text. Light values; the dark values are below. */
+  --bas-bg: #f7f8f5;             /* page background */
+  --bas-surface: #fff;           /* cards, panels, dialogs */
+  --bas-text: #202124;           /* body text */
+  --bas-muted: #5c6670;          /* metadata, captions, labels */
+  --bas-heading: #17202a;        /* headings and selected text */
+  --bas-rule: #d9dfd5;           /* dividers and quiet borders */
+  --bas-code-bg: #eef2f4;        /* inline code, image placeholders, notices */
+  --bas-pre-bg: #f0f3f5;         /* code blocks */
+
+  /* Links and accent. */
+  --bas-link: #1b5f8f;
+  --bas-link-hover: #0f3f63;
+  --bas-accent: #f2b84b;         /* amber: nav rule, current item, quotes */
+
+  /* Form fields and quiet controls. */
+  --bas-control-bg: #fff;
+  --bas-control-border: #bcc7d1;
+  --bas-control-text: #202124;
+  --bas-focus-border: #1d4f7a;
+  --bas-focus-tint: rgba(29, 79, 122, 0.14);
+
+  /* Buttons: primary and secondary variants. */
+  --bas-button-bg: #1b5f8f;
+  --bas-button-border: #164d74;
+  --bas-button-text: #fff;
+  --bas-button-hover-bg: #144b72;
+  --bas-button-secondary-bg: #f3f8fc;
+  --bas-button-secondary-border: #b7d8ec;
+  --bas-button-secondary-text: #174a6f;
+  --bas-button-secondary-hover-bg: #e3f0f8;
+
+  /* Segmented controls (one active segment). */
+  --bas-segment-bg: #eef2f4;
+  --bas-segment-border: #bcc7d1;
+  --bas-segment-text: #405263;
+  --bas-segment-text-hover: #17202a;
+  --bas-segment-active-bg: #d7eaf6;
+  --bas-segment-active-text: #174a6f;
+
+  /* Tags: read-only scan aids, not buttons. */
+  --bas-tag-bg: #eef4f8;
+  --bas-tag-border: #d6e3eb;
+  --bas-tag-text: #1b5f8f;
+
+  /* Status. */
+  --bas-danger: #b32d2e;
+  --bas-success: #008a20;
+
+  /* Site navigation bar (dark in both modes). */
+  --bas-nav-bg: #202124;
+  --bas-nav-text: #fff;
+  --bas-nav-current: #f7d98c;
+  --bas-nav-control-border: rgba(255, 255, 255, 0.36);
+  --bas-nav-control-hover-bg: rgba(255, 255, 255, 0.12);
+  --bas-nav-focus-tint: rgba(242, 184, 75, 0.35);
+
+  /* Home page banner. */
+  --bas-jumbotron-bg: #e9ecef;
+  --bas-jumbotron-text: #202124;
+
+  /* Media, video thumbnails and dark tool pages: same in both modes. */
+  --bas-media-bg: #111821;
+  --bas-on-media: #fff;
+  --bas-media-play-bg: rgba(0, 0, 0, 0.68);
+  --bas-media-play-hover-bg: rgba(27, 95, 143, 0.92);
+  --bas-tool-bg: #000;
+  --bas-tool-text: #fff;
+
+  /* Lightbox: near-black in both modes. */
+  --bas-lightbox-backdrop: rgba(8, 12, 18, 0.9);
+  --bas-lightbox-bg: #0e141b;
+  --bas-lightbox-control-bg: rgba(7, 11, 16, 0.7);
+  --bas-lightbox-control-bg-hover: rgba(20, 28, 38, 0.92);
+  --bas-lightbox-control-border: rgba(255, 255, 255, 0.24);
+  --bas-lightbox-control-border-hover: rgba(255, 255, 255, 0.46);
+  --bas-lightbox-control-text: rgba(255, 255, 255, 0.94);
+  --bas-lightbox-control-text-hover: #fff;
+
+  /* Shadows. --bas-shadow is the colour of the card shadow. */
+  --bas-shadow: rgba(32, 33, 36, 0.08);
+  --bas-shadow-card: 0 1px 2px var(--bas-shadow);
+  --bas-shadow-menu: 0 12px 30px rgba(15, 23, 42, 0.16);
+  --bas-shadow-float: 0 10px 26px rgba(0, 0, 0, 0.28);
+  --bas-shadow-float-hover: 0 12px 30px rgba(0, 0, 0, 0.34);
+  --bas-shadow-focus: 0 0 0 3px var(--bas-focus-tint);
+  --bas-shadow-focus-nav: 0 0 0 3px var(--bas-nav-focus-tint);
+
+  /* Font families. */
+  --bas-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --bas-font-nav: Arial, Helvetica, sans-serif;
+  --bas-font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  /* Type scale. Steps grow by about 1.125 below 24 px and about 1.3 above,
+     so each step is visibly different. One role per step. */
+  --bas-text-xs: 12px;           /* uppercase labels, tags, segments */
+  --bas-text-sm: 14px;           /* metadata, captions, small controls, nav */
+  --bas-text-md: 16px;           /* body text, default controls */
+  --bas-text-lg: 18px;           /* card titles */
+  --bas-text-xl: 20px;           /* h3; dialog titles on phones */
+  --bas-text-2xl: 24px;          /* h2; page titles on phones */
+  --bas-text-3xl: 32px;          /* page titles */
+  --bas-text-4xl: 40px;          /* article titles on wide screens */
+
+  --bas-weight-regular: 400;
+  --bas-weight-medium: 500;      /* buttons */
+  --bas-weight-semibold: 600;    /* labels, small controls */
+  --bas-weight-bold: 700;        /* headings, titles */
+
+  --bas-leading-tight: 1.2;      /* headings, controls */
+  --bas-leading-snug: 1.45;      /* card text, captions */
+  --bas-leading-body: 1.6;       /* body text */
+
+  /* Spacing. A 4 px base with steps about 1.5 times apart. Components use
+     the role tokens below, which say what the space separates. */
+  --bas-space-hairline: 2px;     /* inside segmented controls and menus; phone nav links */
+  --bas-space-1: 4px;
+  --bas-space-2: 8px;
+  --bas-space-3: 12px;
+  --bas-space-4: 16px;
+  --bas-space-5: 24px;
+  --bas-space-6: 32px;
+  --bas-space-7: 48px;
+  --bas-gap-tight: var(--bas-space-1);     /* inside a control; label to hint */
+  --bas-gap-related: var(--bas-space-2);   /* toolbar controls; tags; list items */
+  --bas-gap-group: var(--bas-space-3);     /* form fields; parts of a card body */
+  --bas-pad-card: var(--bas-space-4);      /* inside a card, panel or notice */
+  --bas-gap-cards: var(--bas-space-4);     /* cards in a grid */
+  --bas-gap-section: var(--bas-space-5);   /* page sections */
+  --bas-pad-page: var(--bas-space-5);      /* page edge to content */
+  --bas-gap-flow: var(--bas-space-4);      /* paragraphs, figures, tables in text */
+  --bas-gap-heading: var(--bas-space-6);   /* text above a heading */
+  --bas-gap-page-end: var(--bas-space-7);  /* last content to the page end */
+
+  /* Controls. Heights on the 8 px grid; the smallest meets the WCAG 2.2
+     24 x 24 px minimum target. Controls in one row share one height. */
+  --bas-control-h: 40px;
+  --bas-control-h-sm: 32px;
+  --bas-control-h-xs: 24px;
+  --bas-control-px: var(--bas-space-4);
+  --bas-control-px-sm: var(--bas-space-3);
+  --bas-control-px-xs: var(--bas-space-2);
+  --bas-icon-button-lg: 48px;    /* lightbox previous and next */
+  --bas-icon-button: 40px;       /* lightbox close and information */
+  --bas-icon-button-sm: 32px;    /* nav theme toggle */
+  --bas-icon: 20px;
+  --bas-icon-lg: 24px;
+
+  /* Corners. */
+  --bas-radius-sm: 4px;          /* small controls, menu items, images in text */
+  --bas-radius-md: 6px;          /* buttons, fields, notices */
+  --bas-radius-lg: 8px;          /* cards and panels */
+  --bas-radius-pill: 999px;      /* tags, segmented controls, round buttons */
+
+  /* Widths. */
+  --bas-width-page: 1140px;      /* wide pages, nav bar, gallery */
+  --bas-width-text: 900px;       /* default pages; featured images */
+  --bas-width-narrow: 760px;
+  --bas-measure: 34rem;          /* article text column: 65 to 75 characters of 16 px text */
+  --bas-nav-h: 52px;             /* minimum height of the site nav bar */
+  --bas-video-play: 54px;        /* play button on video thumbnails */
+  --bas-logo-phone: 160px;       /* home banner logo on phones */
+  --bas-featured-max-h: 560px;   /* featured images on the blog page */
+
+}
+
+@media (max-width: 640px) {
+  :root {
+    --bas-pad-page: var(--bas-space-4);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bas-bg: #101315;
+    --bas-surface: #171b1f;
+    --bas-text: #e7e2d5;
+    --bas-muted: #b8c0c4;
+    --bas-heading: #f3d58f;
+    --bas-rule: #34424a;
+    --bas-code-bg: #20272d;
+    --bas-pre-bg: #171f25;
+    --bas-link: #83c5f4;
+    --bas-link-hover: #b7dcff;
+    --bas-control-bg: #151a1e;
+    --bas-control-border: #4a5962;
+    --bas-control-text: #e7e2d5;
+    --bas-focus-border: #83c5f4;
+    --bas-focus-tint: rgba(131, 197, 244, 0.24);
+    --bas-button-bg: #83c5f4;
+    --bas-button-border: #b7dcff;
+    --bas-button-text: #101315;
+    --bas-button-hover-bg: #b7dcff;
+    --bas-button-secondary-bg: rgba(131, 197, 244, 0.14);
+    --bas-button-secondary-border: #3f86ba;
+    --bas-button-secondary-text: #b7dcff;
+    --bas-button-secondary-hover-bg: rgba(131, 197, 244, 0.24);
+    --bas-segment-bg: #151a1e;
+    --bas-segment-border: #4a5962;
+    --bas-segment-text: #e7e2d5;
+    --bas-segment-text-hover: #b7dcff;
+    --bas-segment-active-bg: #f2b84b;
+    --bas-segment-active-text: #101315;
+    --bas-tag-bg: #20272d;
+    --bas-tag-border: #34424a;
+    --bas-tag-text: #83c5f4;
+    --bas-danger: #e57373;
+    --bas-success: #5cc679;
+    --bas-nav-bg: #0f1113;
+    --bas-nav-text: #f6f0df;
+    --bas-nav-current: #f4d67d;
+    --bas-jumbotron-bg: #181e23;
+    --bas-jumbotron-text: #e7e2d5;
+    --bas-shadow: rgba(0, 0, 0, 0.36);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bas-bg: #101315;
+  --bas-surface: #171b1f;
+  --bas-text: #e7e2d5;
+  --bas-muted: #b8c0c4;
+  --bas-heading: #f3d58f;
+  --bas-rule: #34424a;
+  --bas-code-bg: #20272d;
+  --bas-pre-bg: #171f25;
+  --bas-link: #83c5f4;
+  --bas-link-hover: #b7dcff;
+  --bas-control-bg: #151a1e;
+  --bas-control-border: #4a5962;
+  --bas-control-text: #e7e2d5;
+  --bas-focus-border: #83c5f4;
+  --bas-focus-tint: rgba(131, 197, 244, 0.24);
+  --bas-button-bg: #83c5f4;
+  --bas-button-border: #b7dcff;
+  --bas-button-text: #101315;
+  --bas-button-hover-bg: #b7dcff;
+  --bas-button-secondary-bg: rgba(131, 197, 244, 0.14);
+  --bas-button-secondary-border: #3f86ba;
+  --bas-button-secondary-text: #b7dcff;
+  --bas-button-secondary-hover-bg: rgba(131, 197, 244, 0.24);
+  --bas-segment-bg: #151a1e;
+  --bas-segment-border: #4a5962;
+  --bas-segment-text: #e7e2d5;
+  --bas-segment-text-hover: #b7dcff;
+  --bas-segment-active-bg: #f2b84b;
+  --bas-segment-active-text: #101315;
+  --bas-tag-bg: #20272d;
+  --bas-tag-border: #34424a;
+  --bas-tag-text: #83c5f4;
+  --bas-danger: #e57373;
+  --bas-success: #5cc679;
+  --bas-nav-bg: #0f1113;
+  --bas-nav-text: #f6f0df;
+  --bas-nav-current: #f4d67d;
+  --bas-jumbotron-bg: #181e23;
+  --bas-jumbotron-text: #e7e2d5;
+  --bas-shadow: rgba(0, 0, 0, 0.36);
+}

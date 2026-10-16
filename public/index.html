@@ -20,17 +20,6 @@
     <!-- Custom styles for this template -->
     <link href="style.css" rel="stylesheet">
 
-    <style>
-      #currentEvent {
-	  background-color: #ddcccc;
-	  color: black;
-	  font-size: 28px;
-	  display: none;
-      }
-      #currentEvent a {
-	  color: blue;
-      }
-    </style>
     <script>
       function currentEventUntil(targetDate) {
         const currentDate = new Date();
@@ -38,9 +27,9 @@
 
         // Check if current date is less than the target date
         if (currentDate < endDate) {
-            document.getElementById('currentEvent').style.display = 'block';
+            document.getElementById('currentEvent').hidden = false;
         } else {
-            document.getElementById('currentEvent').style.display = 'none';
+            document.getElementById('currentEvent').hidden = true;
         }
     }
     </script>
@@ -48,6 +37,7 @@
     <script src="/assets/js/bas-theme.js"></script>
     <script src="/assets/js/bas-video-lite.js" defer></script>
     <script src="/assets/js/bas-lazy-media.js" defer></script>
+    <link rel="stylesheet" href="/assets/css/tokens.css">
     <link rel="stylesheet" href="/assets/css/bas-site.css">
 </head>
 
@@ -123,7 +113,7 @@
 	      </div>
 	    </div>
 	    <div class="row">
-	      <div class="col-md-12" id="currentEvent">
+	      <div class="col-md-12 bas-current-event" id="currentEvent" hidden>
 		Currently Live: September 21, 2024<br />Astronomy Workshop for Enthusiasts : YouTube livestream <a href="https://www.youtube.com/live/VoVNLAoL-H4?si=caTQGzxmdx_mylQ4">here</a>!<br />
 		</div>
     <script>currentEventUntil('2024-09-21T23:59:59');</script>
@@ -351,10 +341,10 @@
 	    <!--   </div> -->
 	  <!-- </div> -->
 
-	<hr />
-  
-  <div align="right"><a href="/policy/Privacy_Policy.html">Privacy Policy</a> | <a href="/policy/Terms and Conditions.html">Terms and Conditions</a> | <a href="/policy/Shipping_and_delivery.html">Shipping and Delivery</a> | <a href="/policy/Cancellation_and_refund.html">Cancellation and Refund Policy</a> | <a href="/policy/Contact_us.html">Contact Us</a></div><br />
-  <div align="right">Last updated: March 2024</div>
+<footer class="bas-site-footer">
+  <p><a href="/policy/Privacy_Policy.html">Privacy Policy</a> | <a href="/policy/Terms and Conditions.html">Terms and Conditions</a> | <a href="/policy/Shipping_and_delivery.html">Shipping and Delivery</a> | <a href="/policy/Cancellation_and_refund.html">Cancellation and Refund Policy</a> | <a href="/policy/Contact_us.html">Contact Us</a></p>
+  <p>Last updated: March 2024</p>
+</footer>
 </main>
 </body>
 </html>

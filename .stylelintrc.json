@@ -1,0 +1,85 @@
+{
+  "ignoreFiles": [
+    "public/bootstrap/**",
+    "public/font-awesome-4.7.0/**",
+    "node_modules/**"
+  ],
+  "extends": [
+    "stylelint-config-recommended"
+  ],
+  "rules": {
+    "no-descending-specificity": null,
+    "color-no-hex": [
+      true,
+      {
+        "message": "Use a design token from tokens.css (docs/style-system.md)"
+      }
+    ],
+    "color-named": [
+      "never",
+      {
+        "message": "Use a design token from tokens.css (docs/style-system.md)"
+      }
+    ],
+    "function-disallowed-list": [
+      [
+        "rgb",
+        "rgba",
+        "hsl",
+        "hsla",
+        "hwb",
+        "lab",
+        "lch",
+        "oklab",
+        "oklch",
+        "color"
+      ],
+      {
+        "message": "Use a design token from tokens.css (docs/style-system.md)"
+      }
+    ],
+    "declaration-property-value-allowed-list": [
+      {
+        "font-size": [
+          "/^var\\(--bas-text-[\\w-]+\\)$/",
+          "inherit"
+        ],
+        "font-weight": [
+          "/^var\\(--bas-weight-[\\w-]+\\)$/",
+          "inherit"
+        ],
+        "border-radius": [
+          "/^var\\(--bas-radius-[\\w-]+\\)$/",
+          "0",
+          "inherit"
+        ],
+        "box-shadow": [
+          "/^var\\(--bas-shadow-[\\w-]+\\)$/",
+          "none"
+        ],
+        "/^(padding|margin)(-(top|right|bottom|left|inline|block)(-(start|end))?)?$/": [
+          "/^(?:(?:var\\(--bas-(?:space|gap|pad|control-px)[\\w-]*\\)|0|auto|inherit)(?:\\s+|$))+$/"
+        ],
+        "/^(row-|column-)?gap$/": [
+          "/^(?:(?:var\\(--bas-(?:space|gap|pad|control-px)[\\w-]*\\)|0|auto|inherit)(?:\\s+|$))+$/"
+        ]
+      },
+      {
+        "message": "Use a design token from tokens.css (docs/style-system.md)"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "public/assets/css/tokens.css"
+      ],
+      "rules": {
+        "color-no-hex": null,
+        "color-named": null,
+        "function-disallowed-list": null,
+        "declaration-property-value-allowed-list": null
+      }
+    }
+  ]
+}

@@ -43,6 +43,13 @@ BAS_BIGROCK_SSH_KEY
 
 Do not commit real cPanel credentials, private keys, or secret values.
 
+## Shared Styles
+
+The deploy includes `assets/css/tokens.css` and `assets/css/bas-site.css`.
+The WordPress theme and gallery plugin load both files from
+`https://bas.org.in/assets/` at run time. Deploy a token rename together
+with the WordPress code that uses it.
+
 ## Preserved Remote Paths
 
 The sync does not use `rsync --delete`. It also excludes cPanel-managed paths:

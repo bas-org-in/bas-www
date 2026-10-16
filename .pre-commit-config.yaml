@@ -1,0 +1,16 @@
+# Style checks before each commit, and in CI (.github/workflows/checks.yml).
+# Setup: README.md, "Checks".
+repos:
+  - repo: local
+    hooks:
+      - id: stylelint
+        name: stylelint (design tokens)
+        language: system
+        entry: npx --no-install stylelint
+        types: [css]
+        exclude: ^public/(bootstrap|font-awesome-4\.7\.0)/
+      - id: inline-styles
+        name: no inline styles in templates
+        language: system
+        entry: node scripts/check-inline-styles.mjs
+        files: \.(html?|inc|php)$
