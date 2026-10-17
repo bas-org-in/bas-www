@@ -1,0 +1,9 @@
+{
+  "config": {
+    "default": true,
+    // Table rows and code lines cannot wrap; prose lines still have the
+    // 80-character limit.
+    "MD013": { "tables": false, "code_blocks": false }
+  },
+  "ignores": ["public/bootstrap/**", "public/font-awesome-4.7.0/**", "node_modules/**"]
+}

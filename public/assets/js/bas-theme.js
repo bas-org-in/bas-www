@@ -7,7 +7,7 @@
     try {
       var value = window.localStorage && window.localStorage.getItem(storageKey);
       return value === "dark" || value === "light" ? value : null;
-    } catch (error) {
+    } catch (ignoredError) {
       return null;
     }
   }
@@ -29,7 +29,7 @@
   function setStoredTheme(theme) {
     try {
       window.localStorage.setItem(storageKey, theme);
-    } catch (error) {
+    } catch (ignoredError) {
       // Ignore private browsing or storage-denied environments.
     }
   }

@@ -27,32 +27,48 @@ gives its role, then use the token.
 
 ## Checks
 
-Stylelint rejects raw colours and raw font sizes, weights, radii, shadows
-and spacing outside `tokens.css`. A second check rejects `<style>` blocks
-and `style=` attributes in HTML, include and PHP files. CI runs both on
-each push and pull request (`.github/workflows/checks.yml`).
+Checks run before each commit, as pre-commit hooks, and in CI on each push
+and pull request (`.github/workflows/checks.yml`). They find mistakes before
+a change reaches the live site:
 
-Install the linters once:
+- File hygiene: large files, merge conflict markers, invalid JSON and YAML,
+  trailing spaces and missing final newlines.
+- Secrets: private keys and other credentials (gitleaks).
+- Markdown (markdownlint), JavaScript (ESLint), shell scripts (shellcheck)
+  and GitHub Actions workflows (actionlint).
+- Styles: stylelint rejects raw colours and raw font sizes, weights, radii,
+  shadows and spacing outside `tokens.css`. A second check rejects `<style>`
+  blocks and `style=` attributes in HTML, include and PHP files.
+
+The checks skip the vendored Bootstrap and Font Awesome folders.
+
+You need [Node.js](https://nodejs.org/) 22 and
+[uv](https://docs.astral.sh/uv/getting-started/installation/).
+
+Install the linters once, from the repository root:
 
 ```sh
 npm ci
 ```
 
-Run the checks:
-
-```sh
-npm run lint
-```
-
-Run the tests of the checks:
-
-```sh
-npm test
-```
-
-The same checks run as pre-commit hooks. Install the hook once:
+Install the pre-commit hook once, so the checks run on each `git commit`:
 
 ```sh
 uvx pre-commit@4.7.0 install
 ```
 
+Run all checks on all files:
+
+```sh
+uvx pre-commit@4.7.0 run --all-files
+```
+
+Run the tests of the style checks:
+
+```sh
+npm test
+```
+
+Some hooks fix files in place, such as trailing spaces. When a hook changes
+a file, review the change, stage it and commit again. Fix other findings in
+the code.

@@ -1,7 +1,7 @@
 {
   "name": "bas-www-checks",
   "private": true,
-  "description": "Style checks for the BAS main website: stylelint with design tokens, and no inline styles in templates.",
+  "description": "Linters and style checks for the pre-commit checks of the BAS main website.",
   "scripts": {
     "lint": "npm run lint:css && npm run check:inline-styles",
     "lint:css": "stylelint \"public/**/*.css\"",
@@ -9,6 +9,10 @@
     "test": "node scripts/test-style-checks.mjs public/assets/css/probe.css public/assets/css/tokens.css"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "markdownlint-cli2": "0.23.3",
     "stylelint": "17.16.0",
     "stylelint-config-recommended": "18.0.0"
   }
