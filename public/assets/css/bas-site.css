@@ -471,8 +471,7 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   padding: var(--bas-pad-card);
 }
 
-.bas-post-card__meta,
-.bas-post__meta {
+.bas-post-card__meta {
   color: var(--bas-muted);
   font-size: var(--bas-text-sm);
   margin-bottom: var(--bas-space-2);
@@ -493,38 +492,6 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
 .bas-post-card .bas-button {
   align-self: flex-start;
   margin-top: var(--bas-gap-tight);
-}
-
-.bas-post {
-  background: var(--bas-surface);
-  border: 1px solid var(--bas-rule);
-  border-radius: var(--bas-radius-lg);
-  box-shadow: var(--bas-shadow-card);
-  padding: var(--bas-gap-section);
-}
-
-.bas-post__back {
-  display: inline-block;
-  font-size: var(--bas-text-sm);
-  margin-bottom: var(--bas-gap-flow);
-}
-
-.bas-post__featured-image {
-  border-radius: var(--bas-radius-md);
-  display: block;
-  margin: 0 0 var(--bas-gap-section);
-  max-height: var(--bas-featured-max-h);
-  object-fit: contain;
-  width: 100%;
-}
-
-.bas-post__content {
-  max-width: var(--bas-measure);
-}
-
-.bas-post__content :where(img, iframe) {
-  height: auto;
-  max-width: 100%;
 }
 
 /* Pages from the legacy, historic and pages collections. */

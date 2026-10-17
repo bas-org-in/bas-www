@@ -1,6 +1,23 @@
+/*
+ * Lists BAS articles from the WordPress REST API on the static pages.
+ *
+ * An article is a published post in the Articles category that is not in
+ * the Gallery category. The list asks the REST API for these posts only,
+ * with the category IDs looked up by slug, and each card links to the
+ * article address that WordPress gives in the post's "link" field
+ * (/blogs/<post name>/).
+ *
+ * An old single-post link, /blogs/?post=<post name>, goes on to the
+ * address of that post with location.replace().
+ */
 (function () {
   var defaultPostsApi = "/gallery/wp-json/wp/v2/posts";
-  var defaultMediaApi = "/gallery/wp-json/wp/v2/media";
+  var defaultCategoriesApi = "/gallery/wp-json/wp/v2/categories";
+  var defaultCategory = "articles";
+  var defaultExcludeCategory = "gallery";
+  var emptyMessage = "No articles are published yet.";
+  var errorMessage = "Articles are not available at the moment.";
+  var notFoundMessage = "This post was not found.";
 
   function textFromHtml(html) {
     var template = document.createElement("template");
@@ -38,9 +55,15 @@
     };
   }
 
-  function localPostHref(post) {
-    var slug = post && post.slug ? post.slug : "";
-    return "/blogs/" + (slug ? "?post=" + encodeURIComponent(slug) : "");
+  // The address of a post: the "link" field of the REST API. Only http and
+  // https addresses are used.
+  function postHref(post) {
+    try {
+      var url = new URL(post && post.link, window.location.origin);
+      return url.protocol === "https:" || url.protocol === "http:" ? url.href : "";
+    } catch (ignoredError) {
+      return "";
+    }
   }
 
   function buildUrl(base, params) {
@@ -53,7 +76,7 @@
     return url.toString();
   }
 
-  function createPostCard(post, options) {
+  function createPostCard(post, href, options) {
     var article = document.createElement("article");
     article.className = "bas-post-card";
 
@@ -61,7 +84,7 @@
     if (image && options.showImage !== false) {
       var imageLink = document.createElement("a");
       imageLink.className = "bas-post-card__image-link";
-      imageLink.href = localPostHref(post);
+      imageLink.href = href;
 
       var img = document.createElement("img");
       img.src = image.src;
@@ -83,8 +106,8 @@
     var title = document.createElement("h3");
     title.className = "bas-post-card__title";
     var titleLink = document.createElement("a");
-    titleLink.href = localPostHref(post);
-    titleLink.textContent = textFromHtml(post.title && post.title.rendered) || "Untitled post";
+    titleLink.href = href;
+    titleLink.textContent = textFromHtml(post.title && post.title.rendered) || "Untitled article";
     title.appendChild(titleLink);
     body.appendChild(title);
 
@@ -95,8 +118,8 @@
 
     var link = document.createElement("a");
     link.className = "bas-button bas-button--subtle";
-    link.href = localPostHref(post);
-    link.textContent = "Read post";
+    link.href = href;
+    link.textContent = "Read article";
     body.appendChild(link);
 
     article.appendChild(body);
@@ -120,107 +143,86 @@
     });
   }
 
+  // Looks up the IDs of the article category and the excluded category by
+  // their slugs. The result has articles: null when the category is missing.
+  function categoryIds(container) {
+    var api = container.getAttribute("data-bas-wp-categories-api") || defaultCategoriesApi;
+    var include = container.getAttribute("data-bas-wp-category") || defaultCategory;
+    var exclude = container.getAttribute("data-bas-wp-exclude-category") || defaultExcludeCategory;
+
+    return fetchJson(buildUrl(api, { slug: include + "," + exclude, _fields: "id,slug" })).then(function (terms) {
+      var ids = { articles: null, excluded: null };
+      (Array.isArray(terms) ? terms : []).forEach(function (term) {
+        if (term && term.slug === include) {
+          ids.articles = term.id;
+        } else if (term && term.slug === exclude) {
+          ids.excluded = term.id;
+        }
+      });
+      return ids;
+    });
+  }
+
   function renderPostList(container) {
     var api = container.getAttribute("data-bas-wp-api") || defaultPostsApi;
     var count = container.getAttribute("data-bas-wp-count") || "6";
     var layout = container.getAttribute("data-bas-wp-layout") || "grid";
+    var empty = container.getAttribute("data-bas-wp-empty") || emptyMessage;
 
-    setStatus(container, "Loading BAS posts...");
+    setStatus(container, "Loading articles...");
 
-    fetchJson(buildUrl(api, { per_page: count, _embed: "1" }))
-      .then(function (posts) {
-        container.innerHTML = "";
-        if (!posts.length) {
-          setStatus(container, container.getAttribute("data-bas-wp-empty") || "No posts are available yet.");
-          return;
+    categoryIds(container)
+      .then(function (ids) {
+        if (ids.articles === null) {
+          return [];
         }
-
+        return fetchJson(buildUrl(api, {
+          per_page: count,
+          categories: ids.articles,
+          categories_exclude: ids.excluded,
+          _embed: "1"
+        }));
+      })
+      .then(function (posts) {
         var list = document.createElement("div");
         list.className = layout === "compact" ? "bas-post-list bas-post-list--compact" : "bas-post-list";
-        posts.forEach(function (post) {
-          list.appendChild(createPostCard(post, { showImage: layout !== "compact" }));
+        (Array.isArray(posts) ? posts : []).forEach(function (post) {
+          var href = postHref(post);
+          if (href) {
+            list.appendChild(createPostCard(post, href, { showImage: layout !== "compact" }));
+          }
         });
+
+        if (!list.children.length) {
+          setStatus(container, empty);
+          return;
+        }
+        container.innerHTML = "";
         container.appendChild(list);
       })
       .catch(function () {
-        setStatus(container, "BAS posts are temporarily unavailable.", "error");
+        setStatus(container, errorMessage, "error");
       });
   }
 
-  function enhanceImages(article, mediaApi) {
-    var images = Array.prototype.slice.call(article.querySelectorAll("img[data-attachment-id]"));
-    if (!images.length) {
-      return;
-    }
-
-    images.forEach(function (img) {
-      var id = img.getAttribute("data-attachment-id");
-      fetchJson(buildUrl(mediaApi + "/" + encodeURIComponent(id), {}))
-        .then(function (media) {
-          if (media && media.source_url) {
-            img.src = media.source_url;
-          }
-        })
-        .catch(function () {
-          return null;
-        });
-    });
-  }
-
-  function renderSinglePost(container, slug) {
+  // An old single-post link: go on to the address of the post, without a
+  // history entry for the old link.
+  function redirectToPost(container, slug) {
     var api = container.getAttribute("data-bas-wp-api") || defaultPostsApi;
-    var mediaApi = container.getAttribute("data-bas-wp-media-api") || defaultMediaApi;
 
-    setStatus(container, "Loading BAS post...");
+    setStatus(container, "Opening the post...");
 
-    fetchJson(buildUrl(api, { slug: slug, _embed: "1" }))
+    fetchJson(buildUrl(api, { slug: slug, _fields: "link" }))
       .then(function (posts) {
-        container.innerHTML = "";
-        var post = posts[0];
-        if (!post) {
-          setStatus(container, "This BAS post was not found.", "error");
+        var href = Array.isArray(posts) && posts[0] ? postHref(posts[0]) : "";
+        if (!href) {
+          setStatus(container, notFoundMessage, "error");
           return;
         }
-
-        var article = document.createElement("article");
-        article.className = "bas-post";
-
-        var back = document.createElement("a");
-        back.className = "bas-post__back";
-        back.href = "/blogs/";
-        back.textContent = "All posts";
-        article.appendChild(back);
-
-        var title = document.createElement("h1");
-        title.textContent = textFromHtml(post.title && post.title.rendered) || "Untitled post";
-        article.appendChild(title);
-
-        var meta = document.createElement("p");
-        meta.className = "bas-post__meta";
-        meta.textContent = formatDate(post.date);
-        article.appendChild(meta);
-
-        var image = postImage(post);
-        if (image) {
-          var img = document.createElement("img");
-          img.className = "bas-post__featured-image";
-          img.src = image.src;
-          img.alt = image.alt;
-          img.decoding = "async";
-          article.appendChild(img);
-        }
-
-        var content = document.createElement("div");
-        content.className = "bas-post__content";
-        content.innerHTML = post.content && post.content.rendered ? post.content.rendered : "";
-        article.appendChild(content);
-        enhanceImages(article, mediaApi);
-
-        container.appendChild(article);
-        document.title = title.textContent + " · BAS Blogs";
+        window.location.replace(href);
       })
       .catch(function () {
-        setStatus(container, "This BAS post is temporarily unavailable.", "error");
+        setStatus(container, errorMessage, "error");
       });
   }
 
@@ -231,7 +233,7 @@
       var params = new URLSearchParams(window.location.search);
       var slug = params.get("post");
       if (slug) {
-        renderSinglePost(container, slug);
+        redirectToPost(container, slug);
       } else {
         renderPostList(container);
       }
