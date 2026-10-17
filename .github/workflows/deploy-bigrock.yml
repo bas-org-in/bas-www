@@ -110,7 +110,7 @@ jobs:
           rsync_args=(
             -az
             --itemize-changes
-            --exclude=.htaccess
+            --exclude=/.htaccess
             --exclude=.well-known/
             --exclude=cgi-bin/
             --exclude=gallery/
