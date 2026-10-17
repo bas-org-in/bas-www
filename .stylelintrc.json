@@ -12,13 +12,13 @@
     "color-no-hex": [
       true,
       {
-        "message": "Use a design token from tokens.css (docs/style-system.md)"
+        "message": "Use a design token from public/assets/css/tokens.css"
       }
     ],
     "color-named": [
       "never",
       {
-        "message": "Use a design token from tokens.css (docs/style-system.md)"
+        "message": "Use a design token from public/assets/css/tokens.css"
       }
     ],
     "function-disallowed-list": [
@@ -35,7 +35,7 @@
         "color"
       ],
       {
-        "message": "Use a design token from tokens.css (docs/style-system.md)"
+        "message": "Use a design token from public/assets/css/tokens.css"
       }
     ],
     "declaration-property-value-allowed-list": [
@@ -65,7 +65,7 @@
         ]
       },
       {
-        "message": "Use a design token from tokens.css (docs/style-system.md)"
+        "message": "Use a design token from public/assets/css/tokens.css"
       }
     ]
   },
