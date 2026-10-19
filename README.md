@@ -1,10 +1,12 @@
 # BAS Main Website
 
+This repository is part of the BAS website workspace. BAS members set it
+up with `docs/workspace.md` in the repository `bas-org-in/bas-site-ops`.
+
 Curated static source for the main Bangalore Astronomical Society website,
 served at `https://bas.org.in/`.
 
-This repo is part of the BAS website migration workspace. See `import.md` for
-source provenance notes.
+See `import.md` for source provenance notes.
 
 ## Deployment
 
