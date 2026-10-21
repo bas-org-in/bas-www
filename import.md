@@ -13,6 +13,21 @@ Imported:
 - 7 unique old image/Gallery targets recovered from Wayback snapshots and
   stored under their old paths or `recovered-gallery/`.
 
+Renamed:
+
+Three pairs of posts have names that differ only in letter case. Windows
+and the default macOS file system cannot hold both names of a pair in one
+folder. One post of each pair has a new name with its date:
+
+| Old name | New name | Other post, name kept |
+| --- | --- | --- |
+| `BAS_meeting.htm` | `BAS_meeting_2008-11-08.htm` | `BAS_Meeting.htm` |
+| `Hi_everyone.htm` | `Hi_everyone_2008-03-29.htm` | `Hi_Everyone.htm` |
+| `Venues.htm` | `Venues_2009-09-12.htm` | `VENUES.htm` |
+
+`index.html` links to the new names. `public/.htaccess` sends the old
+addresses to the new names with a permanent (301) redirect.
+
 Excluded:
 
 - `wget.log`
