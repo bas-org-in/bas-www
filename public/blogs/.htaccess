@@ -1,6 +1,6 @@
 # Blogs gateway of bas.org.in.
 #
-# /blogs/ and the other files in this folder are static pages. Articles
+# /blogs and the other files in this folder are static pages. Articles
 # are WordPress posts in the Articles category, with the address
 # /blogs/<post name>/. A request for a path that is not a file or a
 # folder here loads WordPress through the gallery gateway
