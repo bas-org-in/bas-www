@@ -12,12 +12,12 @@ the checks and the deployment.
 - Take every colour, size, spacing and radius from
   `public/assets/css/tokens.css`. Other stylesheets use only `var(--bas-...)`.
 - Keep `public/sitemap.xml` in sync with every public static page and use its
-  canonical URL. Maintain historic archive entries in
-  `public/sitemap-historic.xml`, preserving their existing `.htm` or `.html`
-  extensions and exact filename casing. Do not make Historic URLs
-  extensionless or add redirects that remove those extensions. The Historic
-  sitemap is intentionally excluded from `public/robots.txt`; do not add it
-  there.
+  canonical URL. Maintain Historic archive entries in
+  `public/sitemap-historic.xml` as extensionless canonical URLs, preserving
+  the exact filename casing. Apache serves the existing `.htm` and `.html`
+  files internally at those extensionless URLs and redirects extensionful
+  requests to the canonical URLs. List the Historic sitemap directly in
+  `public/robots.txt`; keep it separate from the root `sitemap.xml`.
 - A directory index served slashless needs a `<base href>` with its
   slash-form directory path so relative links and assets keep working.
 - `public/includes/global-nav.html` is the master BAS navigation fragment.
