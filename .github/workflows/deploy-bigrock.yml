@@ -30,7 +30,11 @@ jobs:
   deploy:
     name: Deploy static site
     runs-on: ubuntu-latest
-    environment: bas-bigrock
+    # Runs started by kvsankar use bas-bigrock, which has no reviewer.
+    # Runs started by anyone else use bas-bigrock-review, which waits for
+    # kvsankar's approval. Both environments hold the deploy secrets and
+    # accept only main. triggering_actor also covers re-runs.
+    environment: ${{ github.triggering_actor == 'kvsankar' && 'bas-bigrock' || 'bas-bigrock-review' }}
 
     env:
       REMOTE_HOST: ${{ secrets.BAS_BIGROCK_HOST }}
