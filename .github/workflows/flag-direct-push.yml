@@ -1,0 +1,78 @@
+# Flags pushes to main that skip a pull request (ops/github-checks.md in
+# bas-site-ops, GC-1 to GC-7). The same file is in each private BAS
+# repository. It changes nothing; it only fails when an editor pushes a
+# commit to main that belongs to no merged pull request.
+name: Flag direct pushes
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Commit to check
+        required: true
+      user:
+        description: GitHub user who pushed it
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  flag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check the pushed commits
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          PUSHER: ${{ github.event.pusher.name || github.actor }}
+          IN_SHA: ${{ inputs.sha }}
+          IN_USER: ${{ inputs.user }}
+        run: |
+          set -u
+          if [ "$EVENT" = workflow_dispatch ]; then
+            user=$IN_USER
+            shas=$IN_SHA
+          else
+            user=$PUSHER
+            shas=$(jq -r '.commits[].id' "$GITHUB_EVENT_PATH")
+          fi
+          if ! role=$(gh api "repos/$REPO/collaborators/$user/permission" --jq .role_name); then
+            echo "::error::Could not read the role of $user in $REPO."
+            echo "Could not read the role of \`$user\` in $REPO." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "User $user has the role '$role' in $REPO."
+          if [ "$role" = admin ]; then
+            echo "Administrators are not flagged."
+            exit 0
+          fi
+          direct=""
+          for sha in $shas; do
+            merged=$(gh api "repos/$REPO/commits/$sha/pulls" --jq '[.[] | select(.merged_at != null)] | length') || {
+              echo "::error::Could not read the pull requests of $sha."
+              exit 1
+            }
+            if [ "$merged" = 0 ]; then
+              direct="$direct $sha"
+            fi
+          done
+          if [ -n "$direct" ]; then
+            {
+              echo "## Direct push to main"
+              echo
+              echo "\`$user\` pushed these commits to \`main\` without a pull request:"
+              echo
+              for sha in $direct; do echo "- $sha"; done
+              echo
+              echo "Push to a branch of your own and open a pull request instead."
+            } >> "$GITHUB_STEP_SUMMARY"
+            for sha in $direct; do echo "::error::$sha was pushed to main by $user without a pull request."; done
+            exit 1
+          fi
+          echo "Every pushed commit belongs to a merged pull request."
