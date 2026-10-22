@@ -71,7 +71,7 @@ WordPress core/admin install.
 ## Blogs Gateway
 
 `public/blogs/index.html` is the static blog listing at
-`https://bas.org.in/blogs/`. Articles are WordPress posts in the Articles
+`https://bas.org.in/blogs`. Articles are WordPress posts in the Articles
 category, with the address `https://bas.org.in/blogs/<post name>/`.
 `public/blogs/.htaccess` is the gateway for these addresses. A request for a
 path that is not a file or a folder in `blogs/` loads WordPress through
@@ -80,14 +80,14 @@ author scans, the REST user list, `xmlrpc.php` and `.ht*` files, as the
 gallery gateway does.
 
 Deploy the gateway before the WordPress code that gives articles their
-`/blogs/` address. Until that code is active, WordPress redirects a
+  `/blogs/` article address. Until that code is active, WordPress redirects a
 `/blogs/<post name>/` request to the `/gallery/` address of the post, or shows
 its 404 page.
 
 Check after a deploy:
 
 ```sh
-curl -sI https://bas.org.in/blogs/ | head -1
+curl -sI https://bas.org.in/blogs | head -1
 ```
 
 ```sh

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bas.org.in/sitemap.xml
+
+# WordPress-managed blog posts and pages.
+Sitemap: https://bas.org.in/gallery/wp-sitemap.xml
