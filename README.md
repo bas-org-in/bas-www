@@ -8,6 +8,18 @@ served at `https://bas.org.in/`.
 
 See `import.md` for source provenance notes.
 
+## Sitemap
+
+`public/robots.txt` points crawlers to `sitemap.xml` and WordPress's dynamic
+sitemap index. The historic archive sitemap is intentionally not listed in
+`robots.txt`. `sitemap.xml`
+contains the current static HTML pages from the main, tools, policy and pages
+repositories; `sitemap-historic.xml` retains the historic archive URLs with
+their `.htm` or `.html` extensions. WordPress's own sitemap index keeps
+published posts and pages current. Update the relevant static sitemap when
+adding or removing a page; automatic enforcement and generation can be added
+separately.
+
 ## Deployment
 
 The main site deploys through a manual GitHub Actions workflow. See

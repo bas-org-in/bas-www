@@ -4,35 +4,20 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href="/blogs/">
     <meta name="description" content="Articles by the Bangalore Astronomical Society">
     <meta name="author" content="Bangalore Astronomical Society">
+    <link rel="canonical" href="https://bas.org.in/blogs">
     <link rel="shortcut icon" href="/files/favicon.ico">
 
     <title>BAS Blogs</title>
 
-    <script src="/assets/js/bas-theme.js"></script>
+    <!--#include virtual="/includes/site-assets.html" -->
     <script src="/assets/js/bas-wp-posts.js" defer></script>
-    <link rel="stylesheet" href="/assets/css/tokens.css">
-    <link rel="stylesheet" href="/assets/css/bas-site.css">
   </head>
   <body class="bas-page bas-page--wide">
-    <!-- BAS_GLOBAL_NAV_START -->
-    <nav class="bas-site-nav" aria-label="BAS site sections">
-      <div class="bas-site-nav__inner">
-        <a class="bas-site-nav__brand" href="/">Bangalore Astronomical Society</a>
-        <div class="bas-site-nav__links">
-          <a href="/">Home</a>
-          <a href="/tools/">Tools</a>
-          <a href="/policy/">Policy</a>
-          <a href="/historic/">Historic</a>
-          <a href="/pages/">Pages</a>
-          <a href="/gallery/">Gallery</a>
-          <a href="/blogs/" aria-current="page">Blogs</a>
-        </div>
-        <button class="bas-theme-toggle" type="button" data-bas-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode"><span class="bas-theme-toggle__icon" aria-hidden="true">&#9790;</span></button>
-      </div>
-    </nav>
-    <!-- BAS_GLOBAL_NAV_END -->
+    <!--#set var="BAS_NAV_CURRENT" value="blogs" -->
+    <!--#include virtual="/includes/global-nav.html" -->
 
     <main class="bas-page__main">
       <header class="bas-page-header">
@@ -48,7 +33,7 @@
       </section>
 
       <footer class="bas-site-footer">
-        <p><a href="/policy/Privacy_Policy.html">Privacy Policy</a> | <a href="/policy/Terms and Conditions.html">Terms and Conditions</a> | <a href="/policy/Shipping_and_delivery.html">Shipping and Delivery</a> | <a href="/policy/Cancellation_and_refund.html">Cancellation and Refund Policy</a> | <a href="/policy/Contact_us.html">Contact Us</a></p>
+        <p><a href="/policy/Privacy_Policy">Privacy Policy</a> | <a href="/policy/Terms%20and%20Conditions">Terms and Conditions</a> | <a href="/policy/Shipping_and_delivery">Shipping and Delivery</a> | <a href="/policy/Cancellation_and_refund">Cancellation and Refund Policy</a> | <a href="/policy/Contact_us">Contact Us</a></p>
       </footer>
     </main>
   </body>

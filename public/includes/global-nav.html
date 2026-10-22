@@ -1,0 +1,15 @@
+<nav class="bas-site-nav" aria-label="BAS site sections">
+  <div class="bas-site-nav__inner">
+    <a class="bas-site-nav__brand" href="/">Bangalore Astronomical Society</a>
+    <div class="bas-site-nav__links">
+      <!--#if expr='v("BAS_NAV_CURRENT") = "home"' --><a href="/" aria-current="page">Home</a><!--#else --><a href="/">Home</a><!--#endif -->
+      <!--#if expr='v("BAS_NAV_CURRENT") = "tools"' --><a href="/tools" aria-current="page">Tools</a><!--#else --><a href="/tools">Tools</a><!--#endif -->
+      <!--#if expr='v("BAS_NAV_CURRENT") = "policy"' --><a href="/policy" aria-current="page">Policy</a><!--#else --><a href="/policy">Policy</a><!--#endif -->
+      <!--#if expr='v("BAS_NAV_CURRENT") = "historic"' --><a href="/historic" aria-current="page">Historic</a><!--#else --><a href="/historic">Historic</a><!--#endif -->
+      <!--#if expr='v("BAS_NAV_CURRENT") = "pages"' --><a href="/pages" aria-current="page">Pages</a><!--#else --><a href="/pages">Pages</a><!--#endif -->
+      <a href="/gallery/">Gallery</a>
+      <!--#if expr='v("BAS_NAV_CURRENT") = "blogs"' --><a href="/blogs" aria-current="page">Blogs</a><!--#else --><a href="/blogs">Blogs</a><!--#endif -->
+    </div>
+    <button class="bas-theme-toggle" type="button" data-bas-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode"><span class="bas-theme-toggle__icon" aria-hidden="true">&#9790;</span></button>
+  </div>
+</nav>
