@@ -25,7 +25,9 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 HOME, ARTICLE, OUT = sys.argv[1], sys.argv[2], Path(sys.argv[3])
-CHROME = "/usr/bin/google-chrome"
+# Set BAS_TEST_CHROME to use another browser; without it, Google Chrome on
+# Linux, else the Chromium of Playwright.
+CHROME = os.environ.get("BAS_TEST_CHROME") or ("/usr/bin/google-chrome" if os.path.exists("/usr/bin/google-chrome") else None)
 PLUGIN = "/wp/wp-content/plugins/bas-gallery-publisher/"
 LIGHTBOX_FILES = ["lightbox.js", "article-lightbox.js", "assets/bas-lightbox.css"]
 # Card photos have alternative text; video thumbnails have an empty alt.
@@ -130,6 +132,7 @@ def main():
                 str(ph),
             )
             check(f"AT-39 photo {n} full-size address is the card photo address", ph["src"] == ph["dataSrc"], ph["src"])
+            check(f"AT-39 photo {n} caption holds the card text", all(line in ph["caption"] for line in ph["lines"]), ph["caption"])
         videos = page.eval_on_selector_all(VIDEOS, "v => v.filter(i => i.hasAttribute('role') || i.hasAttribute('data-bas-lightbox-src')).length")
         check("AT-39 video thumbnails do not open the viewer", videos == 0, str(videos))
 
@@ -137,12 +140,17 @@ def main():
         for name in LIGHTBOX_FILES:
             url = next((u for u in statuses if u.endswith(PLUGIN + name) or (PLUGIN + name + "?") in u), None)
             check(f"AT-41 {name} loads from the plugin folder", url is not None and statuses[url] == 200, str(url))
+        home_versions = {u.split("?ver=")[-1] for u in statuses if PLUGIN in u and "?ver=" in u}
         home_modal = modal_markup(page) if page.query_selector(MODAL) else ""
         ref = context.new_page()
+        ref_versions = set()
+        ref.on("response", lambda r: PLUGIN in r.url and "?ver=" in r.url and ref_versions.add(r.url.split("?ver=")[-1]))
         ref.goto(ARTICLE, wait_until="networkidle")
         ref_modal = modal_markup(ref) if ref.query_selector(MODAL) else "missing"
         ref.close()
         check("AT-41 the home page modal equals the article modal", home_modal == ref_modal, "markup differs")
+        check("AT-41 the home page loads the plugin version of the article page",
+              len(home_versions) == 1 and home_versions == ref_versions, f"{home_versions} != {ref_versions}")
 
         # AT-40
         if len(photos) == 9 and page.query_selector(MODAL):
@@ -194,6 +202,8 @@ def main():
         load_all(plain)
         check("AT-42 the photo boxes are the same without the lightbox files", boxes(plain) == with_lightbox,
               f"{with_lightbox} != {boxes(plain)}")
+        dead = plain.eval_on_selector_all(PHOTOS, "imgs => imgs.filter(i => i.hasAttribute('role') || i.hasAttribute('tabindex') || i.hasAttribute('aria-label')).length")
+        check("AT-42 without the lightbox files the photos are plain images", dead == 0, f"{dead} photos are buttons")
         check("AT-42 no request fails", not failed, "; ".join(failed))
         check("AT-42 the console has no errors", not errors, "; ".join(errors))
         browser.close()

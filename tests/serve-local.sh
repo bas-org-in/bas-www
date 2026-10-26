@@ -4,6 +4,10 @@
 # beside this repository, and serves the tree on http://127.0.0.1:PORT/.
 #
 # Usage: tests/serve-local.sh DEPLOY_ROOT [PORT]
+#
+# BAS_PLUGIN_SOURCE names another plugin folder, for example in a worktree.
+# BAS_VENDOR_SOURCE is passed to prepare-deploy.sh. The Python server does
+# not run server-side includes.
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
