@@ -71,6 +71,21 @@ Run the tests of the style checks:
 npm test
 ```
 
+Run the browser test of the home page photo lightbox (AT-39 to AT-42 in
+`docs/style-system-acceptance-tests.md` of `bas-site-ops`). It needs the
+page on a real host name, because imgur and Google Photos refuse some
+photos to a local address. Upload `public/index.html` to staging as
+`home-lightbox-test.html` (`ops/staging.md` in `bas-site-ops`), then run:
+
+```sh
+BAS_TEST_HTTP_USER=... BAS_TEST_HTTP_PASSWORD=... \
+  uv run --no-project --with playwright==1.55.0 python -I tests/home-photo-lightbox.py \
+  https://staging.bas.org.in/home-lightbox-test.html <article page with images> <output folder>
+```
+
+`tests/serve-local.sh` serves a local copy for quick checks; there, AT-42
+fails for the photos that imgur and Google Photos refuse.
+
 Some hooks fix files in place, such as trailing spaces. When a hook changes
 a file, review the change, stage it and commit again. Fix other findings in
 the code.
