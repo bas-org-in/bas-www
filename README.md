@@ -83,6 +83,11 @@ BAS_TEST_HTTP_USER=... BAS_TEST_HTTP_PASSWORD=... \
   https://staging.bas.org.in/home-lightbox-test.html <article page with images> <output folder>
 ```
 
+`BAS_TEST_CHROME` names another browser, and `BAS_TEST_CHROME_ARGS` adds
+browser flags, for example
+`--host-resolver-rules="MAP staging.bas.org.in <address>"` while a local
+DNS cache is out of date.
+
 `tests/serve-local.sh` serves a local copy for quick checks; there, AT-42
 fails for the photos that imgur and Google Photos refuse.
 

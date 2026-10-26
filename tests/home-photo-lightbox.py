@@ -19,6 +19,7 @@ set BAS_TEST_HTTP_USER and BAS_TEST_HTTP_PASSWORD.
 
 import os
 import re
+import shlex
 import sys
 from pathlib import Path
 
@@ -106,7 +107,10 @@ def load_all(page):
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, executable_path=CHROME)
+        # BAS_TEST_CHROME_ARGS adds browser flags, for example a
+        # --host-resolver-rules value while a local DNS cache is out of date.
+        args = shlex.split(os.environ.get("BAS_TEST_CHROME_ARGS", ""))
+        browser = p.chromium.launch(headless=True, executable_path=CHROME, args=args)
         auth = None
         if os.environ.get("BAS_TEST_HTTP_USER"):
             auth = {"username": os.environ["BAS_TEST_HTTP_USER"], "password": os.environ.get("BAS_TEST_HTTP_PASSWORD", "")}
@@ -174,6 +178,8 @@ def main():
                     "() => { const i = document.querySelector('[data-bas-article-lightbox] [data-bas-public-gallery-modal-image]');"
                     " return i.complete && i.naturalWidth > 0; }"
                 )
+                width = page.evaluate("() => document.querySelector('[data-bas-article-lightbox] [data-bas-public-gallery-modal-caption]').getBoundingClientRect().width")
+                check("AT-42 the caption is as wide as on article pages (544 px)", round(width) == 544, str(width))
                 for scheme in ("light", "dark"):
                     for width in (1280, 390):
                         page.emulate_media(color_scheme=scheme)
