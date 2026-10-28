@@ -171,7 +171,7 @@
   --bas-width-page: 1140px;      /* wide pages, nav bar, gallery */
   --bas-width-text: 900px;       /* default pages; featured images */
   --bas-width-narrow: 760px;
-  --bas-measure: 34rem;          /* article text column: 65 to 75 characters of 16 px text */
+  --bas-measure: 544px;          /* article text column: 65 to 75 characters of 16 px text */
   --bas-nav-h: 52px;             /* minimum height of the site nav bar */
   --bas-video-play: 54px;        /* play button on video thumbnails */
   --bas-logo-phone: 160px;       /* home banner logo on phones */
