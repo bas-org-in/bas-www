@@ -36,8 +36,8 @@ a change reaches the live site:
 - File hygiene: large files, merge conflict markers, invalid JSON and YAML,
   trailing spaces and missing final newlines.
 - Secrets: private keys and other credentials (gitleaks).
-- Markdown (markdownlint), JavaScript (ESLint), shell scripts (shellcheck)
-  and GitHub Actions workflows (actionlint).
+- Markdown (markdownlint), JavaScript (ESLint), Python (Ruff), shell
+  scripts (shellcheck) and GitHub Actions workflows (actionlint).
 - Styles: stylelint rejects raw colours and raw font sizes, weights, radii,
   shadows and spacing outside `tokens.css`. A second check rejects `<style>`
   blocks and `style=` attributes in HTML, include and PHP files.
