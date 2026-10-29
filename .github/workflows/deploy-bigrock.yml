@@ -115,6 +115,7 @@ jobs:
             -az
             --itemize-changes
             --exclude=/.htaccess
+            --exclude=/index.php
             --exclude=.well-known/
             --exclude=cgi-bin/
             --exclude=gallery/
