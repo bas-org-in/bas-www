@@ -1,19 +1,20 @@
 /*
  * Lists BAS articles from the WordPress REST API on the static pages.
  *
- * An article is a published post in the Articles category that is not in
- * the Gallery category. The list asks the REST API for these posts only,
- * with the category IDs looked up by slug, and each card links to the
- * article address that WordPress gives in the post's "link" field
- * (/blogs/<post name>/).
+ * An article is a published post in the Articles category (slug "blogs").
+ * A post that is also in a category with the slug "gallery" is left out,
+ * when that category exists. The list asks the REST API at /wp-json/ for
+ * these posts only, with the category IDs looked up by slug, and each card
+ * links to the article address that WordPress gives in the post's "link"
+ * field (/blogs/<post name>/).
  *
  * An old single-post link, /blogs/?post=<post name>, goes on to the
  * address of that post with location.replace().
  */
 (function () {
-  var defaultPostsApi = "/gallery/wp-json/wp/v2/posts";
-  var defaultCategoriesApi = "/gallery/wp-json/wp/v2/categories";
-  var defaultCategory = "articles";
+  var defaultPostsApi = "/wp-json/wp/v2/posts";
+  var defaultCategoriesApi = "/wp-json/wp/v2/categories";
+  var defaultCategory = "blogs";
   var defaultExcludeCategory = "gallery";
   var emptyMessage = "No articles are published yet.";
   var errorMessage = "Articles are not available at the moment.";

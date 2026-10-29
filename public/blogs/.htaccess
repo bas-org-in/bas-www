@@ -1,30 +1,10 @@
-# Blogs gateway of bas.org.in.
+# Article listing of bas.org.in.
 #
 # /blogs/ and the other files in this folder are static pages. Articles
 # are WordPress posts in the Articles category, with the address
-# /blogs/<post name>/. A request for a path that is not a file or a
-# folder here loads WordPress through the gallery gateway
-# (/gallery/index.php). WordPress then shows the article, redirects to the
-# address of the post, or shows its 404 page.
-#
-# The hardening rules are those of the gallery gateway that apply here.
-
-<IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteBase /blogs/
-
-# Refuse author scans and the REST user list.
-RewriteCond %{QUERY_STRING} (author=\d+) [NC,OR]
-RewriteCond %{REQUEST_URI} ^.*wp-json/wp/v2/users(?!/me) [NC]
-RewriteRule .* - [F,L]
-
-RewriteRule ^xmlrpc\.php$ - [F,L]
-
-# Paths that are not files or folders here load WordPress.
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /gallery/index.php [L]
-</IfModule>
+# /blogs/<post name>/. This file has no rewrite rules, so the root
+# .htaccess sends a path that is not a file here to WordPress
+# (bas-site-ops docs/site-addresses.md, SA-5 and SA-8).
 
 <Files xmlrpc.php>
   Require all denied
