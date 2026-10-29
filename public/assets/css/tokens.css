@@ -62,12 +62,12 @@
   --bas-danger: #b32d2e;
   --bas-success: #008a20;
 
-  /* Site navigation bar (dark in both modes). */
-  --bas-nav-bg: #202124;
-  --bas-nav-text: #fff;
-  --bas-nav-current: #f7d98c;
-  --bas-nav-control-border: rgba(255, 255, 255, 0.36);
-  --bas-nav-control-hover-bg: rgba(255, 255, 255, 0.12);
+  /* Site navigation bar: light in light mode, dark in dark mode (ST-74). */
+  --bas-nav-bg: #fff;
+  --bas-nav-text: #202124;
+  --bas-nav-current: #8a5a00;   /* dark amber: 5.9:1 on the bar */
+  --bas-nav-control-border: rgba(32, 33, 36, 0.55);
+  --bas-nav-control-hover-bg: rgba(32, 33, 36, 0.08);
   --bas-nav-focus-tint: rgba(242, 184, 75, 0.35);
 
   /* Home page banner. */
@@ -224,6 +224,8 @@
     --bas-nav-bg: #0f1113;
     --bas-nav-text: #f6f0df;
     --bas-nav-current: #f4d67d;
+    --bas-nav-control-border: rgba(255, 255, 255, 0.36);
+    --bas-nav-control-hover-bg: rgba(255, 255, 255, 0.12);
     --bas-jumbotron-bg: #181e23;
     --bas-jumbotron-text: #e7e2d5;
     --bas-shadow: rgba(0, 0, 0, 0.36);
@@ -268,6 +270,8 @@
   --bas-nav-bg: #0f1113;
   --bas-nav-text: #f6f0df;
   --bas-nav-current: #f4d67d;
+  --bas-nav-control-border: rgba(255, 255, 255, 0.36);
+  --bas-nav-control-hover-bg: rgba(255, 255, 255, 0.12);
   --bas-jumbotron-bg: #181e23;
   --bas-jumbotron-text: #e7e2d5;
   --bas-shadow: rgba(0, 0, 0, 0.36);
