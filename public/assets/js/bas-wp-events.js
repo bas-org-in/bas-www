@@ -1,15 +1,18 @@
 /*
  * Shows the latest events on the home page (bas-site-ops
- * docs/style-system.md, ST-79).
+ * docs/style-system.md, ST-79 and ST-85).
  *
- * The section [data-bas-events] gets up to 3 cards from The Events
- * Calendar REST API: the upcoming events first, soonest first (an event
- * that has not ended counts as upcoming), then the most recent past
- * events. Without an answer or without events, the section keeps only
- * its heading and the "All events" link.
+ * The section [data-bas-events] gets up to 3 cards in one request to
+ * /wp-json/bas/v1/home-events, which the home page preloads. The server
+ * puts the upcoming events first, soonest first (an event that has not
+ * ended counts as upcoming), then the most recent past events. Without
+ * an answer or without events, the section keeps only its heading and
+ * the "All events" link.
  */
 (function () {
-  var defaultApi = "/wp-json/tribe/events/v1/events";
+  // The <link rel="preload"> of the home page names the same address, so
+  // the browser uses its response.
+  var defaultSource = "/wp-json/bas/v1/home-events";
   var maxCards = 3;
 
   function textFromHtml(html) {
@@ -44,42 +47,12 @@
     return (sizes.medium_large && sizes.medium_large.url) || image.url || "";
   }
 
-  function fetchEvents(api, query) {
-    return fetch(api + "?" + query, { credentials: "same-origin", headers: { Accept: "application/json" } })
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error("events API " + response.status);
-        }
-        return response.json();
-      });
-  }
-
-  function upcoming(api) {
-    return fetchEvents(api, "ends_after=now&per_page=" + maxCards).then(function (data) {
-      return data.events || [];
-    });
-  }
-
-  // Past events come oldest first. The last page holds the most recent;
-  // the page before it fills up a short last page.
-  function past(api, needed) {
-    var base = "ends_before=now&start_date=2000-01-01&per_page=50";
-    return fetchEvents(api, base).then(function (first) {
-      var pages = first.total_pages || 1;
-      if (pages <= 1) {
-        return first.events || [];
+  function fetchEntries(source) {
+    return fetch(source, { credentials: "same-origin" }).then(function (response) {
+      if (!response.ok) {
+        throw new Error("home events " + response.status);
       }
-      var withLastPage = function (previous) {
-        return fetchEvents(api, base + "&page=" + pages).then(function (last) {
-          return (previous.events || []).concat(last.events || []);
-        });
-      };
-      if (pages === 2) {
-        return withLastPage(first);
-      }
-      return fetchEvents(api, base + "&page=" + (pages - 1)).then(withLastPage);
-    }).then(function (events) {
-      return events.slice(-needed).reverse();
+      return response.json();
     });
   }
 
@@ -138,21 +111,13 @@
 
   function render(section) {
     var list = section.querySelector("[data-bas-events-list]");
-    var api = section.getAttribute("data-bas-events-api") || defaultApi;
+    var source = section.getAttribute("data-bas-events-src") || defaultSource;
     if (!list || !window.fetch) {
       return;
     }
-    upcoming(api).then(function (next) {
-      var cards = next.slice(0, maxCards).map(function (event) {
-        return card(event, "Upcoming");
-      });
-      if (cards.length >= maxCards) {
-        return cards;
-      }
-      return past(api, maxCards - cards.length).then(function (earlier) {
-        return cards.concat(earlier.map(function (event) {
-          return card(event, "Past");
-        }));
+    fetchEntries(source).then(function (entries) {
+      return (Array.isArray(entries) ? entries : []).slice(0, maxCards).map(function (entry) {
+        return card(entry.event, entry.label);
       });
     }).then(function (cards) {
       cards.forEach(function (element) {
