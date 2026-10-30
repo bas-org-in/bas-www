@@ -84,9 +84,32 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
 }
 
 .bas-site-nav__brand {
+  align-items: center;
+  display: inline-flex;
   font-size: var(--bas-text-md);
   font-weight: var(--bas-weight-bold);
+  gap: var(--bas-space-3);
   white-space: nowrap;
+}
+
+/* The BAS logo before the name (ST-77). The stylesheet adds it, so every
+   copy of the nav bar shows it. The logo file is 140 x 94.6. */
+.bas-site-nav__brand::before {
+  background: url("/files/bas_logo.svg") no-repeat center / contain;
+  content: "";
+  flex: none;
+  height: var(--bas-nav-logo-h);
+  width: calc(var(--bas-nav-logo-h) * 1.48);
+}
+
+html[data-theme="dark"] .bas-site-nav__brand::before {
+  filter: invert(1) brightness(1.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .bas-site-nav__brand::before {
+    filter: invert(1) brightness(1.18);
+  }
 }
 
 .bas-site-nav__links {
@@ -739,9 +762,11 @@ html[data-theme="dark"] .bas-home-banner__logo {
     position: relative;
   }
 
+  /* Phones: the logo only. The link is as wide as the logo and clips the
+     name, which stays the link text for screen readers. */
   .bas-site-nav__brand {
-    font-size: var(--bas-text-md);
-    white-space: normal;
+    max-width: calc(var(--bas-nav-logo-h) * 1.48);
+    overflow: hidden;
   }
 
   .bas-site-nav__links {
