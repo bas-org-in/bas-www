@@ -324,14 +324,52 @@ html[data-theme="dark"] .bas-site-nav__brand::before {
 
 /* Home page announcement banner. Shown by a script until its end date. */
 
-.bas-current-event {
-  background: var(--bas-jumbotron-bg);
-  color: var(--bas-jumbotron-text);
-  font-size: var(--bas-text-3xl);
+/* Home page events (ST-79): the cards use the post card recipe. */
+
+.bas-home-events {
+  margin-bottom: var(--bas-gap-heading);
 }
 
-.bas-current-event a {
+.bas-home-events__head {
+  align-items: baseline;
+  border-bottom: 1px solid var(--bas-rule);
+  display: flex;
+  gap: var(--bas-gap-related);
+  justify-content: space-between;
+  margin-bottom: var(--bas-gap-cards);
+}
+
+.bas-page .bas-home-events__head h2 {
+  border: 0;
+  margin: 0;
+  padding: 0 0 var(--bas-space-2);
+}
+
+.bas-home-events__list {
+  display: grid;
+  gap: var(--bas-gap-cards);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.bas-event-card__label {
+  font-size: var(--bas-text-xs);
+  font-weight: var(--bas-weight-bold);
+  margin-bottom: var(--bas-space-1);
+  text-transform: uppercase;
+}
+
+.bas-event-card__label--upcoming {
   color: var(--bas-link);
+}
+
+.bas-event-card__label--past {
+  color: var(--bas-muted);
+}
+
+.bas-event-card__venue {
+  color: var(--bas-muted);
+  font-size: var(--bas-text-sm);
+  margin: 0;
 }
 
 /* Media. */
@@ -731,6 +769,10 @@ html[data-theme="dark"] .bas-home-banner__logo {
 
   body.bas-page .jumbotron .col-md-10 {
     clear: both;
+  }
+
+  .bas-home-events__list {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .bas-home-banner__inner {
