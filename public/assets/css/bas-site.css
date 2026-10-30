@@ -73,7 +73,7 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   margin: 0 auto;
   max-width: var(--bas-width-page);
   min-height: var(--bas-nav-h);
-  padding: var(--bas-space-2) var(--bas-space-4);
+  padding: var(--bas-space-2) var(--bas-pad-page);
   row-gap: var(--bas-space-1);
 }
 
@@ -196,6 +196,16 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   margin: 0;
   max-width: none;
   padding: 0;
+}
+
+/* Bootstrap gives .container a fixed width (1170 px on wide screens).
+   Inside the main column, which already sets the page width, that width
+   overflows to the right and moves the content off centre (ST-76). Its
+   side padding would also indent the content from the nav bar's edges. */
+.bas-page:not(.bas-page--dark-tool) .bas-page__main .container {
+  padding-left: 0;
+  padding-right: 0;
+  width: auto;
 }
 
 .bas-page :where(h1, h2, h3, h4) {
@@ -725,7 +735,7 @@ html[data-theme="dark"] .bas-home-banner__logo {
     flex-direction: column;
     gap: var(--bas-space-1);
     min-height: 0;
-    padding: var(--bas-space-2) var(--bas-space-3);
+    padding: var(--bas-space-2) var(--bas-pad-page);
     position: relative;
   }
 
