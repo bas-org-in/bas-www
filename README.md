@@ -91,6 +91,15 @@ DNS cache is out of date.
 `tests/serve-local.sh` serves a local copy for quick checks; there, AT-42
 fails for the photos that imgur and Google Photos refuse.
 
+Run the browser test of the home page welcome banner (AT-47) against the
+home page, for example on staging:
+
+```sh
+BAS_TEST_HTTP_USER=... BAS_TEST_HTTP_PASSWORD=... \
+  uv run --no-project --with playwright==1.55.0 python -I tests/home-banner.py \
+  https://staging.bas.org.in/
+```
+
 Some hooks fix files in place, such as trailing spaces. When a hook changes
 a file, review the change, stage it and commit again. Fix other findings in
 the code.

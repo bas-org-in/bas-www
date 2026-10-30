@@ -624,6 +624,44 @@ html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.svg"] 
   }
 }
 
+/* Home page welcome banner (ST-75): no box, a rule under it. */
+
+.bas-home-banner__inner {
+  align-items: center;
+  border-bottom: 1px solid var(--bas-rule);
+  display: flex;
+  gap: var(--bas-space-5);
+  padding: var(--bas-space-6) 0 var(--bas-space-5);
+}
+
+.bas-home-banner__logo {
+  flex: none;
+  height: auto;
+  width: var(--bas-logo-banner);
+}
+
+.bas-page .bas-home-banner__text {
+  color: var(--bas-text);
+  font-size: var(--bas-text-xl);
+  font-weight: var(--bas-weight-regular);
+  line-height: var(--bas-leading-body);
+  margin: 0;
+}
+
+.bas-home-banner__welcome {
+  display: block;
+}
+
+html[data-theme="dark"] .bas-home-banner__logo {
+  filter: invert(1) brightness(1.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .bas-home-banner__logo {
+    filter: invert(1) brightness(1.18);
+  }
+}
+
 /* Phones. */
 
 @media (max-width: 640px) {
@@ -660,6 +698,20 @@ html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.svg"] 
 
   body.bas-page .jumbotron .col-md-10 {
     clear: both;
+  }
+
+  .bas-home-banner__inner {
+    flex-direction: column;
+    gap: var(--bas-space-3);
+    text-align: center;
+  }
+
+  .bas-home-banner__logo {
+    max-width: var(--bas-logo-phone);
+  }
+
+  .bas-page .bas-home-banner__text {
+    font-size: var(--bas-text-md);
   }
 
   body.bas-page .jumbotron p {
