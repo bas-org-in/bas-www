@@ -28,11 +28,13 @@ CARDS_JS = """() => {
   if (!section) return null;
   const social = document.querySelector('.fa-telegram').closest('.row');
   const whatWeDo = [...document.querySelectorAll('h2')].find(h => h.textContent.trim() === 'What we do');
+  const main = document.querySelector('[data-bas-toc-root]');
   const all = section.querySelector('.bas-home-events__head a');
   return {
     heading: section.querySelector('h2').textContent.trim(), allHref: all && all.getAttribute('href'),
     top: box(section)[1], bottom: box(section)[1] + box(section)[3],
     socialBottom: box(social)[1] + box(social)[3], whatWeDoTop: box(whatWeDo)[1],
+    left: box(section)[0], mainRight: main ? box(main)[0] + box(main)[2] : null,
     currentEvent: !!document.getElementById('currentEvent'),
     scrollWidth: document.documentElement.scrollWidth,
     cards: [...section.querySelectorAll('.bas-event-card')].map(c => ({
@@ -119,7 +121,8 @@ def main():
             check("heading is Events", s["heading"] == "Events", s["heading"])
             check("All events links to /events/", s["allHref"] == "/events/", str(s["allHref"]))
             check("section is under the social links", s["top"] >= s["socialBottom"] - 1)
-            check("section is above What we do", s["bottom"] <= s["whatWeDoTop"] + 1)
+            check("section is in the events column, right of the main content (ST-80)",
+                  s["mainRight"] is not None and s["left"] >= s["mainRight"])
             check("page has no #currentEvent", not s["currentEvent"])
             got = [(c["label"], c["href"]) for c in s["cards"]]
             check(f"cards match the API ({len(got)})", got == [(w[0], w[1]) for w in want], str(got))
@@ -128,8 +131,8 @@ def main():
                       f"image={c['image']} date={c['date']!r}")
                 if w[2].get("venue"):
                     check(f"card '{c['title'][:30]}' has the venue", c["venue"].strip() != "", "no venue")
-            tops = {round(c["box"][1]) for c in s["cards"]}
-            check("cards are in one row at 1280 px", len(tops) <= 1, str(tops))
+            stacked = all(b["box"][1] >= a["box"][1] + a["box"][3] for a, b in pairwise(s["cards"]))
+            check("cards stand one above the other at 1280 px", stacked)
             check("no JavaScript errors", errors == [], str(errors))
         page.close()
 
@@ -147,6 +150,7 @@ def main():
         if s and s["cards"]:
             stacked = all(b["box"][1] >= a["box"][1] + a["box"][3] for a, b in pairwise(s["cards"]))
             check("cards are in one column at 390 px", stacked)
+            check("section is above What we do at 390 px", s["bottom"] <= s["whatWeDoTop"] + 1)
             check(f"page is {s['scrollWidth']} px wide at 390 px", s["scrollWidth"] <= 390)
         page.close()
 

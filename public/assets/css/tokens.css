@@ -176,6 +176,14 @@
   --bas-video-play: 54px;        /* play button on video thumbnails */
   --bas-logo-phone: 160px;       /* home banner logo on phones */
   --bas-logo-banner: 120px;      /* home banner logo on wide screens (ST-75) */
+  --bas-gap-columns: var(--bas-space-6);  /* page columns: contents, main, events (ST-80) */
+  --bas-toc-w: 184px;            /* contents list column (ST-80, ST-81) */
+  --bas-toc-menu-w: 240px;       /* open "On this page" list (ST-82) */
+  --bas-events-w: 280px;         /* home events column, 1100 px and wider (ST-80) */
+  --bas-events-w-md: 260px;      /* home events column, 768 to 1099 px (ST-80) */
+  --bas-event-img-max-h: 360px;  /* event image in a card (ST-83) */
+  --bas-event-thumb-w: 120px;    /* event image in a phone row (ST-83) */
+  --bas-event-thumb-max-h: 140px;
   --bas-nav-logo-h: 32px;        /* logo before the name in the nav bar (ST-77) */
   --bas-featured-max-h: 560px;   /* featured images on the blog page */
 
