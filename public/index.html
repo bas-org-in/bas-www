@@ -23,6 +23,8 @@
     <script src="/assets/js/bas-theme.js"></script>
     <script src="/assets/js/bas-video-lite.js" defer></script>
     <script src="/assets/js/bas-lazy-media.js" defer></script>
+    <!-- The event cards load while the page loads (bas-site-ops docs/style-system.md, ST-85). -->
+    <link rel="preload" href="/wp-json/bas/v1/home-events" as="fetch" crossorigin="anonymous">
     <link rel="stylesheet" href="/assets/css/tokens.css">
     <link rel="stylesheet" href="/assets/css/bas-site.css">
 </head>

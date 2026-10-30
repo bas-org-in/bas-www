@@ -1,13 +1,14 @@
 """Browser tests of the Events section of the home page.
 
-They check AT-51 of docs/style-system-acceptance-tests.md in
-bas-org-in/bas-site-ops (requirement ST-79). They send requests only.
+They check AT-51 and AT-58 of docs/style-system-acceptance-tests.md in
+bas-org-in/bas-site-ops (requirements ST-79 and ST-85). They send
+requests only.
 
 Usage:
   uv run --no-project --with playwright==1.55.0 python -I tests/home-events.py HOME_URL
 
 HOME_URL is the home page, for example https://bas.org.in/. The test
-reads the expected events from the same REST API as the page. For a site
+reads the expected events from The Events Calendar REST API. For a site
 behind a password prompt, set BAS_TEST_HTTP_USER and
 BAS_TEST_HTTP_PASSWORD. Set BAS_TEST_CHROME to a Chrome binary to use it
 instead of the Playwright browser.
@@ -60,9 +61,9 @@ COLOURS_JS = """() => {
 failures = 0
 
 
-def check(name, ok, detail=""):
+def check(name, ok, detail="", test="AT-51"):
     global failures
-    print(("ok   " if ok else "FAIL ") + "AT-51 " + name + (f" ({detail})" if detail and not ok else ""))
+    print(("ok   " if ok else "FAIL ") + test + " " + name + (f" ({detail})" if detail and not ok else ""))
     if not ok:
         failures += 1
 
@@ -96,6 +97,42 @@ def expected(request, url):
             events = previous + get(f"ends_before=now&start_date=2000-01-01&per_page=50&page={pages}").get("events", [])
         cards += [("Past", e) for e in list(reversed(events))[: 3 - len(cards)]]
     return [(label, e["url"], e.get("venue") or {}) for label, e in cards]
+
+
+HOME_EVENTS = "/wp-json/bas/v1/home-events"
+
+
+def check_one_request(browser, request, url, credentials, want):
+    """AT-58: one early request to the home events endpoint."""
+    response = request.get(urljoin(url, HOME_EVENTS))
+    data = response.json() if response.ok else None
+    entries = data if isinstance(data, list) else []
+    check(f"{HOME_EVENTS} returns 200 and a list of at most 3", response.ok and isinstance(data, list)
+          and len(entries) <= 3, f"{response.status} {str(data)[:80]}", "AT-58")
+    got = [(e.get("label"), (e.get("event") or {}).get("url")) for e in entries]
+    check("the endpoint's order and labels match The Events Calendar API", got == [(w[0], w[1]) for w in want],
+          str(got), "AT-58")
+    check("each entry has the event's url, title and start_date",
+          all({"url", "title", "start_date"} <= set(e.get("event") or {}) for e in entries), "", "AT-58")
+
+    page = browser.new_page(viewport={"width": 390, "height": 844}, http_credentials=credentials)
+    api_requests = []
+    page.on("request", lambda r: "/wp-json/" in r.url and api_requests.append(r.url))
+    page.goto(url, wait_until="networkidle")
+    preload = page.evaluate(f"""() => [...document.head.querySelectorAll('link[rel="preload"]')]
+      .some(l => l.getAttribute('href') === '{HOME_EVENTS}')""")
+    check("the <head> has a preload link for the endpoint", preload, "", "AT-58")
+    paths = [r.split("://", 1)[-1].split("/", 1)[-1] for r in api_requests]
+    check(f"the page makes exactly one /wp-json/ request, to the endpoint ({len(paths)})",
+          paths == [HOME_EVENTS.lstrip("/")], str(paths), "AT-58")
+    timing = page.evaluate(f"""() => {{
+      const e = performance.getEntriesByType('resource').find(r => r.name.endsWith('{HOME_EVENTS}'));
+      const n = performance.getEntriesByType('navigation')[0];
+      return e ? [e.startTime, n.domContentLoadedEventStart] : null; }}""")
+    check(f"the request starts before DOMContentLoaded ({timing})", bool(timing) and timing[0] < timing[1], "", "AT-58")
+    cards = page.eval_on_selector_all(".bas-event-card .bas-post-card__title a", "els => els.map(a => a.href)")
+    check(f"the {len(want)} expected card(s) show", cards == [w[1] for w in want], str(cards), "AT-58")
+    page.close()
 
 
 def main():
@@ -157,13 +194,14 @@ def main():
         page = browser.new_page(viewport={"width": 1280, "height": 900}, http_credentials=credentials)
         errors = []
         page.on("pageerror", lambda e: errors.append(str(e)))
-        page.route("**/wp-json/tribe/**", lambda route: route.abort())
+        page.route("**/wp-json/**", lambda route: route.abort())
         page.goto(url, wait_until="networkidle")
         s = page.evaluate(CARDS_JS)
         check("API blocked: heading and link stay, no cards",
               s is not None and s["heading"] == "Events" and s["allHref"] == "/events/" and s["cards"] == [])
         check("API blocked: no JavaScript errors", errors == [], str(errors))
         page.close()
+        check_one_request(browser, ctx.request, url, credentials, want)
         browser.close()
     print(f"{failures} failure(s)")
     sys.exit(1 if failures else 0)

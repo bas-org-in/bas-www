@@ -100,8 +100,10 @@ BAS_TEST_HTTP_USER=... BAS_TEST_HTTP_PASSWORD=... \
   https://staging.bas.org.in/
 ```
 
-Run the browser test of the home page Events section (AT-51) the same
-way. It reads the expected events from the site's events API:
+Run the browser test of the home page Events section (AT-51, AT-58) the
+same way. It reads the expected events from The Events Calendar API and
+checks that the page makes one early request to
+`/wp-json/bas/v1/home-events`:
 
 ```sh
 BAS_TEST_HTTP_USER=... BAS_TEST_HTTP_PASSWORD=... \
