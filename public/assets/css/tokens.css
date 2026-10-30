@@ -175,6 +175,8 @@
   --bas-nav-h: 52px;             /* minimum height of the site nav bar */
   --bas-video-play: 54px;        /* play button on video thumbnails */
   --bas-logo-phone: 160px;       /* home banner logo on phones */
+  --bas-logo-banner: 120px;      /* home banner logo on wide screens (ST-75) */
+  --bas-nav-logo-h: 32px;        /* logo before the name in the nav bar (ST-77) */
   --bas-featured-max-h: 560px;   /* featured images on the blog page */
 
 }

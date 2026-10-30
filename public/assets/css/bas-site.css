@@ -73,7 +73,7 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   margin: 0 auto;
   max-width: var(--bas-width-page);
   min-height: var(--bas-nav-h);
-  padding: var(--bas-space-2) var(--bas-space-4);
+  padding: var(--bas-space-2) var(--bas-pad-page);
   row-gap: var(--bas-space-1);
 }
 
@@ -84,9 +84,32 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
 }
 
 .bas-site-nav__brand {
+  align-items: center;
+  display: inline-flex;
   font-size: var(--bas-text-md);
   font-weight: var(--bas-weight-bold);
+  gap: var(--bas-space-3);
   white-space: nowrap;
+}
+
+/* The BAS logo before the name (ST-77). The stylesheet adds it, so every
+   copy of the nav bar shows it. The logo file is 140 x 94.6. */
+.bas-site-nav__brand::before {
+  background: url("/files/bas_logo.svg") no-repeat center / contain;
+  content: "";
+  flex: none;
+  height: var(--bas-nav-logo-h);
+  width: calc(var(--bas-nav-logo-h) * 1.48);
+}
+
+html[data-theme="dark"] .bas-site-nav__brand::before {
+  filter: invert(1) brightness(1.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .bas-site-nav__brand::before {
+    filter: invert(1) brightness(1.18);
+  }
 }
 
 .bas-site-nav__links {
@@ -196,6 +219,16 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   margin: 0;
   max-width: none;
   padding: 0;
+}
+
+/* Bootstrap gives .container a fixed width (1170 px on wide screens).
+   Inside the main column, which already sets the page width, that width
+   overflows to the right and moves the content off centre (ST-76). Its
+   side padding would also indent the content from the nav bar's edges. */
+.bas-page:not(.bas-page--dark-tool) .bas-page__main .container {
+  padding-left: 0;
+  padding-right: 0;
+  width: auto;
 }
 
 .bas-page :where(h1, h2, h3, h4) {
@@ -624,6 +657,44 @@ html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.svg"] 
   }
 }
 
+/* Home page welcome banner (ST-75): no box, a rule under it. */
+
+.bas-home-banner__inner {
+  align-items: center;
+  border-bottom: 1px solid var(--bas-rule);
+  display: flex;
+  gap: var(--bas-space-5);
+  padding: var(--bas-space-6) 0 var(--bas-space-5);
+}
+
+.bas-home-banner__logo {
+  flex: none;
+  height: auto;
+  width: var(--bas-logo-banner);
+}
+
+.bas-page .bas-home-banner__text {
+  color: var(--bas-text);
+  font-size: var(--bas-text-xl);
+  font-weight: var(--bas-weight-regular);
+  line-height: var(--bas-leading-body);
+  margin: 0;
+}
+
+.bas-home-banner__welcome {
+  display: block;
+}
+
+html[data-theme="dark"] .bas-home-banner__logo {
+  filter: invert(1) brightness(1.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .bas-home-banner__logo {
+    filter: invert(1) brightness(1.18);
+  }
+}
+
 /* Phones. */
 
 @media (max-width: 640px) {
@@ -662,6 +733,20 @@ html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.svg"] 
     clear: both;
   }
 
+  .bas-home-banner__inner {
+    flex-direction: column;
+    gap: var(--bas-space-3);
+    text-align: center;
+  }
+
+  .bas-home-banner__logo {
+    max-width: var(--bas-logo-phone);
+  }
+
+  .bas-page .bas-home-banner__text {
+    font-size: var(--bas-text-md);
+  }
+
   body.bas-page .jumbotron p {
     font-size: var(--bas-text-md);
     line-height: var(--bas-leading-body);
@@ -673,13 +758,15 @@ html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.svg"] 
     flex-direction: column;
     gap: var(--bas-space-1);
     min-height: 0;
-    padding: var(--bas-space-2) var(--bas-space-3);
+    padding: var(--bas-space-2) var(--bas-pad-page);
     position: relative;
   }
 
+  /* Phones: the logo only. The link is as wide as the logo and clips the
+     name, which stays the link text for screen readers. */
   .bas-site-nav__brand {
-    font-size: var(--bas-text-md);
-    white-space: normal;
+    max-width: calc(var(--bas-nav-logo-h) * 1.48);
+    overflow: hidden;
   }
 
   .bas-site-nav__links {
