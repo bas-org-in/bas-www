@@ -100,6 +100,15 @@ BAS_TEST_HTTP_USER=... BAS_TEST_HTTP_PASSWORD=... \
   https://staging.bas.org.in/
 ```
 
+Run the browser test of the home page Events section (AT-51) the same
+way. It reads the expected events from the site's events API:
+
+```sh
+BAS_TEST_HTTP_USER=... BAS_TEST_HTTP_PASSWORD=... \
+  uv run --no-project --with playwright==1.55.0 python -I tests/home-events.py \
+  https://staging.bas.org.in/
+```
+
 Some hooks fix files in place, such as trailing spaces. When a hook changes
 a file, review the change, stage it and commit again. Fix other findings in
 the code.
