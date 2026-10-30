@@ -179,6 +179,89 @@ html[data-theme="dark"] .bas-site-nav__brand::before {
   transform: translateY(-1px);
 }
 
+/* The "Menu" button (ST-84). bas-theme.js adds it and sets
+   bas-site-nav--menu when the links do not fit in one row. */
+
+.bas-site-nav__menu-button {
+  display: none;
+}
+
+.bas-site-nav--menu .bas-site-nav__inner {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: var(--bas-space-3);
+  position: relative;
+}
+
+.bas-site-nav--menu .bas-site-nav__menu-button {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--bas-nav-control-border);
+  border-radius: var(--bas-radius-pill);
+  color: var(--bas-nav-text);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: var(--bas-text-sm);
+  font-weight: var(--bas-weight-bold);
+  gap: var(--bas-space-1);
+  height: var(--bas-control-h-sm);
+  margin-left: auto;
+  padding: 0 var(--bas-control-px-sm);
+}
+
+.bas-site-nav--menu .bas-site-nav__menu-button::after {
+  content: "\25BE";
+}
+
+.bas-site-nav--menu .bas-site-nav__menu-button:hover,
+.bas-site-nav--menu .bas-site-nav__menu-button:focus {
+  background: var(--bas-nav-control-hover-bg);
+  border-color: var(--bas-accent);
+  outline: none;
+}
+
+.bas-site-nav--menu .bas-site-nav__menu-button:focus-visible {
+  box-shadow: var(--bas-shadow-focus-nav);
+}
+
+.bas-site-nav--menu .bas-theme-toggle {
+  position: static;
+}
+
+.bas-site-nav--menu .bas-site-nav__links {
+  display: none;
+}
+
+.bas-site-nav--menu.bas-site-nav--open .bas-site-nav__links {
+  align-items: stretch;
+  background: var(--bas-nav-bg);
+  border: 1px solid var(--bas-rule);
+  border-radius: var(--bas-radius-lg);
+  box-shadow: var(--bas-shadow-menu);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: var(--bas-space-1);
+  min-width: var(--bas-toc-menu-w);
+  padding: var(--bas-space-2);
+  position: absolute;
+  right: var(--bas-pad-page);
+  top: 100%;
+}
+
+.bas-site-nav--menu.bas-site-nav--open .bas-site-nav__links a {
+  border-bottom: 0;
+  border-left: 3px solid transparent;
+  font-size: var(--bas-text-md);
+  padding: var(--bas-space-2) var(--bas-space-3);
+}
+
+.bas-site-nav--menu.bas-site-nav--open .bas-site-nav__links a[aria-current="page"] {
+  border-left-color: var(--bas-accent);
+}
+
 /* Site footer. */
 
 .bas-site-footer {
@@ -348,7 +431,294 @@ html[data-theme="dark"] .bas-site-nav__brand::before {
 .bas-home-events__list {
   display: grid;
   gap: var(--bas-gap-cards);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Event images show whole, at their own proportions (ST-83). */
+.bas-event-card .bas-post-card__image-link {
+  background: var(--bas-surface);
+}
+
+.bas-event-card .bas-post-card__image-link img {
+  aspect-ratio: auto;
+  height: auto;
+  max-height: var(--bas-event-img-max-h);
+  object-fit: contain;
+}
+
+/* Home page layout (ST-80): contents list, main content, events. */
+
+.bas-home-layout {
+  align-items: start;
+  column-gap: var(--bas-gap-columns);
+  display: grid;
+  grid-template-areas: "main events";
+  grid-template-columns: minmax(0, 1fr) var(--bas-events-w);
+}
+
+.bas-has-toc .bas-home-layout {
+  grid-template-areas: "toc main events";
+  grid-template-columns: var(--bas-toc-w) minmax(0, 1fr) var(--bas-events-w);
+}
+
+.bas-home-layout__toc {
+  align-self: stretch;
+  display: none;
+  grid-area: toc;
+}
+
+.bas-has-toc .bas-home-layout__toc {
+  display: block;
+}
+
+.bas-home-layout__main {
+  grid-area: main;
+}
+
+.bas-home-layout__events {
+  grid-area: events;
+}
+
+/* The main content is one column: the Bootstrap columns stack. */
+.bas-home-layout__main .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.bas-home-layout__main .row > [class*="col-"] {
+  float: none;
+  padding-left: 0;
+  padding-right: 0;
+  width: auto;
+}
+
+.bas-home-layout__main .row > [class*="col-"] > h2:first-child {
+  margin-top: 0;
+}
+
+.bas-home-layout__main .bas-home-text > [class*="col-"] {
+  padding-bottom: var(--bas-gap-section);
+}
+
+/* Video and photo tiles keep a grid inside the column. */
+.bas-home-layout__main .bas-home-tiles {
+  display: grid;
+  gap: var(--bas-gap-cards);
+  grid-template-columns: repeat(auto-fill, minmax(var(--bas-toc-menu-w), 1fr));
+  margin-bottom: var(--bas-gap-section);
+}
+
+.bas-home-layout__main .bas-home-tiles::before,
+.bas-home-layout__main .bas-home-tiles::after {
+  content: none;
+}
+
+.bas-home-social {
+  margin-bottom: var(--bas-gap-section);
+}
+
+/* Contents list (ST-81, ST-82). bas-page-toc.js builds it and sets
+   bas-has-toc on the body. */
+
+.bas-page-toc {
+  font-size: var(--bas-text-sm);
+  pointer-events: auto;
+  position: sticky;
+  top: var(--bas-space-4);
+}
+
+.bas-page-toc__title {
+  color: var(--bas-text);
+  font-weight: var(--bas-weight-bold);
+  margin: 0 0 var(--bas-space-2);
+}
+
+.bas-page-toc__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bas-page-toc__list li {
+  line-height: var(--bas-leading-snug);
+  margin: 0 0 var(--bas-gap-related);
+}
+
+.bas-page-toc__list a {
+  color: var(--bas-link);
+  text-decoration: none;
+}
+
+.bas-page-toc__list a:hover,
+.bas-page-toc__list a:focus {
+  color: var(--bas-link-hover);
+  text-decoration: underline;
+}
+
+.bas-page-toc__button {
+  display: none;
+}
+
+[data-bas-toc-root] :is(h1, h2) {
+  scroll-margin-top: var(--bas-space-7);
+}
+
+/* On posts the list stands in a rail left of the article column. */
+.bas-page-toc-wrap {
+  position: relative;
+}
+
+.bas-page-toc-rail {
+  bottom: 0;
+  display: none;
+  left: calc(50% - var(--bas-measure) / 2 - var(--bas-gap-columns) - var(--bas-toc-w));
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: var(--bas-toc-w);
+}
+
+.bas-has-toc .bas-page-toc-rail {
+  display: block;
+}
+
+@media (max-width: 1099px) {
+  .bas-home-layout,
+  .bas-has-toc .bas-home-layout {
+    grid-template-areas: "main events";
+    grid-template-columns: minmax(0, 1fr) var(--bas-events-w-md);
+  }
+
+  /* The button shares the cell of the main content and stays at the top
+     of the window while the content scrolls. */
+  .bas-home-layout__toc {
+    grid-area: main;
+    pointer-events: none;
+    position: relative;
+    z-index: 5;
+  }
+
+  .bas-has-toc [data-bas-toc-root] {
+    padding-top: var(--bas-space-7);
+  }
+
+  .bas-page-toc {
+    top: var(--bas-space-2);
+    width: max-content;
+  }
+
+  .bas-page-toc__title {
+    display: none;
+  }
+
+  .bas-page-toc__button {
+    align-items: center;
+    background: var(--bas-surface);
+    border: 1px solid var(--bas-muted);
+    border-radius: var(--bas-radius-pill);
+    box-shadow: var(--bas-shadow-card);
+    color: var(--bas-text);
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: var(--bas-text-sm);
+    font-weight: var(--bas-weight-bold);
+    gap: var(--bas-space-1);
+    height: var(--bas-control-h-sm);
+    padding: 0 var(--bas-control-px-sm);
+  }
+
+  .bas-page-toc__button::after {
+    content: "\25BE";
+  }
+
+  .bas-page-toc__button:focus-visible {
+    box-shadow: var(--bas-shadow-focus);
+    outline: none;
+  }
+
+  .bas-page-toc__list {
+    display: none;
+  }
+
+  .bas-page-toc--open .bas-page-toc__list {
+    background: var(--bas-surface);
+    border: 1px solid var(--bas-rule);
+    border-radius: var(--bas-radius-lg);
+    box-shadow: var(--bas-shadow-menu);
+    display: block;
+    margin-top: var(--bas-space-1);
+    max-height: 70vh;
+    min-width: var(--bas-toc-menu-w);
+    overflow-y: auto;
+    padding: var(--bas-space-2) var(--bas-space-4);
+    position: absolute;
+  }
+
+  .bas-page-toc--open .bas-page-toc__list li {
+    margin: 0;
+  }
+
+  .bas-page-toc--open .bas-page-toc__list a {
+    display: block;
+    font-size: var(--bas-text-md);
+    padding: var(--bas-space-2) 0;
+  }
+
+  .bas-page-toc-rail {
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(var(--bas-measure), calc(100% - 2 * var(--bas-pad-page)));
+    z-index: 5;
+  }
+
+  .bas-has-toc .bas-page-toc-wrap {
+    padding-top: var(--bas-space-7);
+  }
+}
+
+@media (max-width: 767px) {
+  .bas-home-layout,
+  .bas-has-toc .bas-home-layout {
+    grid-template-areas: "events" "main";
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bas-home-layout__events .bas-home-events {
+    margin-bottom: var(--bas-gap-section);
+  }
+
+  /* Events are compact rows (ST-83). */
+  .bas-post-card.bas-event-card {
+    align-items: flex-start;
+    flex-direction: row;
+  }
+
+  .bas-event-card .bas-post-card__image-link {
+    flex: none;
+    width: var(--bas-event-thumb-w);
+  }
+
+  .bas-event-card .bas-post-card__image-link img {
+    max-height: var(--bas-event-thumb-max-h);
+  }
+
+  .bas-event-card .bas-post-card__body {
+    padding: var(--bas-space-2) var(--bas-space-3);
+  }
+
+  .bas-event-card .bas-post-card__title {
+    font-size: var(--bas-text-md);
+    margin-bottom: 0;
+  }
+
+  .bas-event-card .bas-post-card__meta {
+    margin-bottom: var(--bas-space-1);
+  }
+
+  .bas-event-card__venue {
+    display: none;
+  }
 }
 
 .bas-event-card__label {
@@ -769,10 +1139,6 @@ html[data-theme="dark"] .bas-home-banner__logo {
 
   body.bas-page .jumbotron .col-md-10 {
     clear: both;
-  }
-
-  .bas-home-events__list {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .bas-home-banner__inner {

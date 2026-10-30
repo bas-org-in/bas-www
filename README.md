@@ -109,6 +109,19 @@ BAS_TEST_HTTP_USER=... BAS_TEST_HTTP_PASSWORD=... \
   https://staging.bas.org.in/
 ```
 
+Run the browser test of the home page layout, its contents list and the
+event images (AT-52 to AT-55, AT-57) the same way:
+
+```sh
+BAS_TEST_HTTP_USER=... BAS_TEST_HTTP_PASSWORD=... \
+  uv run --no-project --with playwright==1.55.0 python -I tests/home-layout.py \
+  https://staging.bas.org.in/
+```
+
+The "Menu" button of `bas-theme.js` (AT-56) and the contents list on
+posts are tested in `bas-site-ops`: `wordpress/tests/site-nav.py` and
+`wordpress/tests/page-toc.py`.
+
 Some hooks fix files in place, such as trailing spaces. When a hook changes
 a file, review the change, stage it and commit again. Fix other findings in
 the code.

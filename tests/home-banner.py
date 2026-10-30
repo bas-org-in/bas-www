@@ -29,7 +29,7 @@ BANNER_JS = """() => {
   const inner = banner.querySelector('.bas-home-banner__inner') || banner;
   const logo = banner.querySelector('img');
   const text = banner.querySelector('p');
-  const heading = [...document.querySelectorAll('h2')].find(h => h.textContent.trim() === 'What we do');
+  const layout = document.querySelector('.bas-home-layout');
   const box = e => e.getBoundingClientRect();
   const bs = getComputedStyle(banner), is = getComputedStyle(inner), ts = getComputedStyle(text);
   return {
@@ -40,7 +40,7 @@ BANNER_JS = """() => {
     text: [box(text).left, box(text).top, box(text).width, box(text).height],
     size: ts.fontSize, weight: Number(ts.fontWeight), fg: rgba(ts.color),
     page: rgba(getComputedStyle(document.body).backgroundColor),
-    heading: heading ? box(heading).left : null,
+    layout: layout ? box(layout).left : null,
     scrollWidth: document.documentElement.scrollWidth,
   };
 }"""
@@ -96,9 +96,9 @@ def main():
             check(f"{scheme}: text is {b['size']} at weight {b['weight']}", b["size"] == "20px" and b["weight"] >= 400)
             ratio = contrast(b["fg"], b["page"])
             check(f"{scheme}: text contrast {ratio:.1f}:1", ratio >= 4.5, "needs 4.5")
-            if b["heading"] is not None:
-                offset = abs(b["logo"][0] - b["heading"])
-                check(f"{scheme}: logo is {offset:.0f} px from the 'What we do' edge", offset <= 2, "at most 2")
+            if b["layout"] is not None:
+                offset = abs(b["logo"][0] - b["layout"])
+                check(f"{scheme}: logo is {offset:.0f} px from the left edge of the layout", offset <= 2, "at most 2")
             page.close()
         for width in (1407, 1280, 1024):
             page = browser.new_page(viewport={"width": width, "height": 900}, http_credentials=credentials)
@@ -106,15 +106,15 @@ def main():
             edges = page.evaluate("""() => { const r = s => document.querySelector(s).getBoundingClientRect();
               return {brand: r('.bas-site-nav__brand').left, toggle: r('.bas-theme-toggle').right,
                       left: r('.bas-home-banner__inner').left, right: r('.bas-home-banner__inner').right,
-                      heading: [...document.querySelectorAll('h2')].find(h => h.textContent.trim() === 'What we do').getBoundingClientRect().left}; }""")
+                      layout: document.querySelector('.bas-home-layout').getBoundingClientRect().left}; }""")
             centre = (edges["left"] + edges["right"]) / 2 - width / 2
             check(f"{width} px: content is {centre:+.0f} px from the centre", abs(centre) <= 1, "at most 1", "AT-48")
             check(f"{width} px: content starts {edges['left'] - edges['brand']:+.0f} px from the nav name",
                   abs(edges["left"] - edges["brand"]) <= 1, "at most 1", "AT-48")
             check(f"{width} px: content ends {edges['right'] - edges['toggle']:+.0f} px from the toggle",
                   abs(edges["right"] - edges["toggle"]) <= 1, "at most 1", "AT-48")
-            check(f"{width} px: 'What we do' starts {edges['heading'] - edges['left']:+.0f} px from the banner",
-                  abs(edges["heading"] - edges["left"]) <= 1, "at most 1", "AT-48")
+            check(f"{width} px: the layout starts {edges['layout'] - edges['left']:+.0f} px from the banner",
+                  abs(edges["layout"] - edges["left"]) <= 1, "at most 1", "AT-48")
             page.close()
         page = browser.new_page(viewport={"width": 390, "height": 900}, http_credentials=credentials)
         page.goto(url, wait_until="networkidle")
