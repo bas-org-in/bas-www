@@ -92,10 +92,10 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
   white-space: nowrap;
 }
 
-/* The BAS logo before the name (ST-77). The stylesheet adds it, so every
-   copy of the nav bar shows it. The logo file is 140 x 94.6. */
+/* The BAS logo before the name (ST-77, ST-86). The stylesheet adds it, so
+   every copy of the nav bar shows it. The logo file is 480 x 324. */
 .bas-site-nav__brand::before {
-  background: url("/files/bas_logo.svg") no-repeat center / contain;
+  background: url("/files/bas_logo_black.png") no-repeat center / contain;
   content: "";
   flex: none;
   height: var(--bas-nav-logo-h);
@@ -103,12 +103,12 @@ body.bas-page--dark-tool :where(.container-info, .container-main) {
 }
 
 html[data-theme="dark"] .bas-site-nav__brand::before {
-  filter: invert(1) brightness(1.18);
+  background-image: url("/files/bas_logo_white.png");
 }
 
 @media (prefers-color-scheme: dark) {
   html:not([data-theme="light"]) .bas-site-nav__brand::before {
-    filter: invert(1) brightness(1.18);
+    background-image: url("/files/bas_logo_white.png");
   }
 }
 
@@ -1055,16 +1055,6 @@ html[data-theme="dark"] .bas-site-nav__brand::before {
   color: var(--bas-jumbotron-text);
 }
 
-html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.svg"] {
-  filter: invert(1) brightness(1.18);
-}
-
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) body.bas-page .jumbotron img[src="/files/bas_logo.svg"] {
-    filter: invert(1) brightness(1.18);
-  }
-}
-
 /* Home page welcome banner (ST-75): no box, a rule under it. */
 
 .bas-home-banner__inner {
@@ -1093,13 +1083,26 @@ html[data-theme="dark"] body.bas-page .jumbotron img[src="/files/bas_logo.svg"] 
   display: block;
 }
 
-html[data-theme="dark"] .bas-home-banner__logo {
-  filter: invert(1) brightness(1.18);
+/* The page has one logo file for each theme (ST-86). */
+.bas-home-banner__logo--on-dark {
+  display: none;
+}
+
+html[data-theme="dark"] .bas-home-banner__logo--on-light {
+  display: none;
+}
+
+html[data-theme="dark"] .bas-home-banner__logo--on-dark {
+  display: block;
 }
 
 @media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) .bas-home-banner__logo {
-    filter: invert(1) brightness(1.18);
+  html:not([data-theme="light"]) .bas-home-banner__logo--on-light {
+    display: none;
+  }
+
+  html:not([data-theme="light"]) .bas-home-banner__logo--on-dark {
+    display: block;
   }
 }
 
@@ -1128,13 +1131,6 @@ html[data-theme="dark"] .bas-home-banner__logo {
 
   .bas-page :where(.jumbotron) {
     padding: var(--bas-gap-section) var(--bas-pad-page);
-  }
-
-  body.bas-page .jumbotron img[src="/files/bas_logo.svg"] {
-    display: block;
-    float: none;
-    margin: 0 auto var(--bas-space-3);
-    max-width: var(--bas-logo-phone);
   }
 
   body.bas-page .jumbotron .col-md-10 {
