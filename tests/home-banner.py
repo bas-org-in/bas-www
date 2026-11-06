@@ -1,7 +1,7 @@
 """Browser tests of the home page welcome banner.
 
-They check AT-47 and AT-48 of docs/style-system-acceptance-tests.md in
-bas-org-in/bas-site-ops (requirements ST-75 and ST-76). They send
+They check AT-47, AT-48 and AT-59 of docs/style-system-acceptance-tests.md in
+bas-org-in/bas-site-ops (requirements ST-75, ST-76 and ST-86). They send
 requests only.
 
 Usage:
@@ -27,7 +27,9 @@ BANNER_JS = """() => {
   const banner = document.querySelector('.bas-home-banner');
   if (!banner) return null;
   const inner = banner.querySelector('.bas-home-banner__inner') || banner;
-  const logo = banner.querySelector('img');
+  const shown = [...banner.querySelectorAll('img')].filter(i => getComputedStyle(i).display !== 'none');
+  const logo = shown[0];
+  const brand = getComputedStyle(document.querySelector('.bas-site-nav__brand'), '::before');
   const text = banner.querySelector('p');
   const layout = document.querySelector('.bas-home-layout');
   const box = e => e.getBoundingClientRect();
@@ -37,6 +39,9 @@ BANNER_JS = """() => {
     rule: is.borderBottomWidth !== '0px' ? is.borderBottomColor : bs.borderBottomColor,
     ruleToken: token('--bas-rule'), brs: banner.querySelectorAll('br').length,
     logo: [box(logo).left, box(logo).top, box(logo).width, box(logo).height],
+    logos: shown.length, logoSrc: logo.currentSrc, logoNatural: logo.naturalWidth,
+    logoFilter: getComputedStyle(logo).filter,
+    brandImage: brand.backgroundImage, brandFilter: brand.filter,
     text: [box(text).left, box(text).top, box(text).width, box(text).height],
     size: ts.fontSize, weight: Number(ts.fontWeight), fg: rgba(ts.color),
     page: rgba(getComputedStyle(document.body).backgroundColor),
@@ -45,6 +50,7 @@ BANNER_JS = """() => {
   };
 }"""
 
+TOGGLE = "[data-bas-theme-toggle], .bas-theme-toggle"
 failures = 0
 
 
@@ -53,6 +59,16 @@ def check(name, ok, detail="", test="AT-47"):
     print(("ok   " if ok else "FAIL ") + test + " " + name + (f" ({detail})" if detail and not ok else ""))
     if not ok:
         failures += 1
+
+
+def check_logo(b, name, label):
+    """The banner and the brand show the logo file of the theme, with no filter (AT-59)."""
+    check(f"{label}: banner shows one logo", b["logos"] == 1, b["logos"], "AT-59")
+    check(f"{label}: banner shows {name}", b["logoSrc"].endswith(name), b["logoSrc"], "AT-59")
+    check(f"{label}: banner file is at least 360 px wide", b["logoNatural"] >= 360, b["logoNatural"], "AT-59")
+    check(f"{label}: banner logo has no filter", b["logoFilter"] == "none", b["logoFilter"], "AT-59")
+    check(f"{label}: brand shows {name}", name in b["brandImage"], b["brandImage"], "AT-59")
+    check(f"{label}: brand logo has no filter", b["brandFilter"] == "none", b["brandFilter"], "AT-59")
 
 
 def luminance(rgb):
@@ -87,6 +103,11 @@ def main():
                 page.close()
                 continue
             check(f"{scheme}: banner is {b['height']:.0f} px high", b["height"] <= 160, "at most 160")
+            check_logo(b, "bas_logo_white.png" if scheme == "dark" else "bas_logo_black.png", scheme)
+            page.click(TOGGLE)
+            turned = page.evaluate(BANNER_JS)
+            check_logo(turned, "bas_logo_black.png" if scheme == "dark" else "bas_logo_white.png", f"{scheme}, toggled")
+            page.click(TOGGLE)
             check(f"{scheme}: banner has no background", b["bg"] in ("rgba(0, 0, 0, 0)", "transparent"), b["bg"])
             check(f"{scheme}: banner has the --bas-rule bottom border", b["rule"] == b["ruleToken"], b["rule"])
             check(f"{scheme}: banner has no <br>", b["brs"] == 0, str(b["brs"]))
