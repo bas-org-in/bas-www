@@ -10,6 +10,9 @@
  *
  * An old single-post link, /blogs/?post=<post name>, goes on to the
  * address of that post with location.replace().
+ *
+ * /blogs/?topic=<tag slug> lists only the articles with that post tag, for the
+ * known topics only (AA-30 to AA-32). The tag ID is looked up by its slug.
  */
 (function () {
   var defaultPostsApi = "/wp-json/wp/v2/posts";
@@ -19,6 +22,9 @@
   var emptyMessage = "No articles are published yet.";
   var errorMessage = "Articles are not available at the moment.";
   var notFoundMessage = "This post was not found.";
+  var noTopicMessage = "No articles on this topic yet.";
+  var defaultTagsApi = "/wp-json/wp/v2/tags";
+  var topics = ["awe", "star-party"];
 
   function textFromHtml(html) {
     var template = document.createElement("template");
@@ -164,23 +170,40 @@
     });
   }
 
-  function renderPostList(container) {
+  // The ID of a topic's post tag, or null when the tag does not exist.
+  function tagId(container, topic) {
+    if (!topic) {
+      return window.Promise.resolve(undefined);
+    }
+    var api = container.getAttribute("data-bas-wp-tags-api") || defaultTagsApi;
+    return fetchJson(buildUrl(api, { slug: topic, _fields: "id,slug" })).then(function (terms) {
+      var term = (Array.isArray(terms) ? terms : []).filter(function (item) {
+        return item && item.slug === topic;
+      })[0];
+      return term ? term.id : null;
+    });
+  }
+
+  function renderPostList(container, topic) {
     var api = container.getAttribute("data-bas-wp-api") || defaultPostsApi;
     var count = container.getAttribute("data-bas-wp-count") || "6";
     var layout = container.getAttribute("data-bas-wp-layout") || "grid";
-    var empty = container.getAttribute("data-bas-wp-empty") || emptyMessage;
+    var empty = topic ? noTopicMessage : (container.getAttribute("data-bas-wp-empty") || emptyMessage);
 
     setStatus(container, "Loading articles...");
 
-    categoryIds(container)
-      .then(function (ids) {
-        if (ids.articles === null) {
+    window.Promise.all([categoryIds(container), tagId(container, topic)])
+      .then(function (found) {
+        var ids = found[0];
+        var tag = found[1];
+        if (ids.articles === null || tag === null) {
           return [];
         }
         return fetchJson(buildUrl(api, {
           per_page: count,
           categories: ids.articles,
           categories_exclude: ids.excluded,
+          tags: tag,
           _embed: "1"
         }));
       })
@@ -227,16 +250,33 @@
       });
   }
 
+  // Marks the link of the current topic (AA-30).
+  function markTopic(topic) {
+    var want = topic ? "/blogs/?topic=" + topic : "/blogs/";
+    Array.prototype.slice.call(document.querySelectorAll(".bas-topic-links a")).forEach(function (link) {
+      if (link.getAttribute("href") === want) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
-    Array.prototype.slice.call(document.querySelectorAll("[data-bas-wp-posts]")).forEach(renderPostList);
+    Array.prototype.slice.call(document.querySelectorAll("[data-bas-wp-posts]")).forEach(function (container) {
+      renderPostList(container, "");
+    });
+
+    var params = new URLSearchParams(window.location.search);
+    var topic = topics.indexOf(params.get("topic")) >= 0 ? params.get("topic") : "";
+    markTopic(topic);
 
     Array.prototype.slice.call(document.querySelectorAll("[data-bas-wp-post]")).forEach(function (container) {
-      var params = new URLSearchParams(window.location.search);
       var slug = params.get("post");
       if (slug) {
         redirectToPost(container, slug);
       } else {
-        renderPostList(container);
+        renderPostList(container, topic);
       }
     });
   });
