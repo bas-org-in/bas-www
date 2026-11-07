@@ -855,6 +855,19 @@ html[data-theme="dark"] .bas-site-nav__brand::before {
   max-width: 64rem;
 }
 
+/* Topic links above the article list (AA-30 to AA-32). */
+.bas-topic-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bas-space-2) var(--bas-space-4);
+  margin-bottom: var(--bas-space-4);
+}
+
+.bas-topic-links a[aria-current="page"] {
+  font-weight: var(--bas-weight-bold);
+  text-decoration: none;
+}
+
 .bas-wp-posts {
   margin: var(--bas-gap-flow) 0 var(--bas-space-6);
 }
