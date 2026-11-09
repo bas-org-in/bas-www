@@ -13,6 +13,8 @@
  *
  * /blogs/?topic=<tag slug> lists only the articles with that post tag, for the
  * known topics only (AA-30 to AA-32). The tag ID is looked up by its slug.
+ * /blogs/?page=<n> shows the next articles, with links between pages (AA-33,
+ * AA-34).
  */
 (function () {
   var defaultPostsApi = "/wp-json/wp/v2/posts";
@@ -141,6 +143,54 @@
     container.appendChild(status);
   }
 
+  // The posts of one page, and the number of pages from the X-WP-TotalPages
+  // header. A page past the last answers HTTP 400, which gives no posts.
+  function fetchPage(url) {
+    return fetch(url, { credentials: "same-origin" }).then(function (response) {
+      if (response.status === 400) {
+        return { posts: [], pages: 0 };
+      }
+      if (!response.ok) {
+        throw new Error("WordPress returned HTTP " + response.status);
+      }
+      var pages = parseInt(response.headers.get("X-WP-TotalPages") || "1", 10);
+      return response.json().then(function (posts) {
+        return { posts: posts, pages: pages };
+      });
+    });
+  }
+
+  // The address of a page of the listing, with its topic.
+  function listingHref(topic, page) {
+    var params = [];
+    if (topic) {
+      params.push("topic=" + encodeURIComponent(topic));
+    }
+    if (page > 1) {
+      params.push("page=" + page);
+    }
+    return "/blogs/" + (params.length ? "?" + params.join("&") : "");
+  }
+
+  function pageLinks(topic, page, pages) {
+    var nav = document.createElement("nav");
+    nav.className = "bas-wp-posts__pages";
+    nav.setAttribute("aria-label", "Pages of articles");
+    if (page > 1) {
+      var newer = document.createElement("a");
+      newer.href = listingHref(topic, page - 1);
+      newer.textContent = "Newer articles";
+      nav.appendChild(newer);
+    }
+    if (page < pages) {
+      var older = document.createElement("a");
+      older.href = listingHref(topic, page + 1);
+      older.textContent = "Older articles";
+      nav.appendChild(older);
+    }
+    return nav.children.length ? nav : null;
+  }
+
   function fetchJson(url) {
     return fetch(url, { credentials: "same-origin" }).then(function (response) {
       if (!response.ok) {
@@ -184,7 +234,9 @@
     });
   }
 
-  function renderPostList(container, topic) {
+  function renderPostList(container, topic, page) {
+    page = page || 1;
+    var paged = container.hasAttribute("data-bas-wp-post");
     var api = container.getAttribute("data-bas-wp-api") || defaultPostsApi;
     var count = container.getAttribute("data-bas-wp-count") || "6";
     var layout = container.getAttribute("data-bas-wp-layout") || "grid";
@@ -197,17 +249,20 @@
         var ids = found[0];
         var tag = found[1];
         if (ids.articles === null || tag === null) {
-          return [];
+          return { posts: [], pages: 0 };
         }
-        return fetchJson(buildUrl(api, {
+        return fetchPage(buildUrl(api, {
           per_page: count,
+          page: page > 1 ? page : "",
           categories: ids.articles,
           categories_exclude: ids.excluded,
           tags: tag,
           _embed: "1"
         }));
       })
-      .then(function (posts) {
+      .then(function (result) {
+        var posts = result.posts;
+        var links = paged ? pageLinks(topic, page, result.pages) : null;
         var list = document.createElement("div");
         list.className = layout === "compact" ? "bas-post-list bas-post-list--compact" : "bas-post-list";
         (Array.isArray(posts) ? posts : []).forEach(function (post) {
@@ -219,10 +274,13 @@
 
         if (!list.children.length) {
           setStatus(container, empty);
-          return;
+        } else {
+          container.innerHTML = "";
+          container.appendChild(list);
         }
-        container.innerHTML = "";
-        container.appendChild(list);
+        if (links) {
+          container.appendChild(links);
+        }
       })
       .catch(function () {
         setStatus(container, errorMessage, "error");
@@ -269,6 +327,7 @@
 
     var params = new URLSearchParams(window.location.search);
     var topic = topics.indexOf(params.get("topic")) >= 0 ? params.get("topic") : "";
+    var page = /^[1-9][0-9]*$/.test(params.get("page") || "") ? parseInt(params.get("page"), 10) : 1;
     markTopic(topic);
 
     Array.prototype.slice.call(document.querySelectorAll("[data-bas-wp-post]")).forEach(function (container) {
@@ -276,7 +335,7 @@
       if (slug) {
         redirectToPost(container, slug);
       } else {
-        renderPostList(container, topic);
+        renderPostList(container, topic, page);
       }
     });
   });
