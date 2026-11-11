@@ -56,6 +56,7 @@ The sync does not use `rsync --delete`. It also excludes cPanel-managed paths:
 
 ```text
 /.htaccess
+/index.php
 .well-known/
 cgi-bin/
 gallery/
@@ -63,26 +64,25 @@ wp/
 ```
 
 This keeps certificate, CGI, and WordPress files outside the static site deploy.
-`/.htaccess` is only the file in the document root, which cPanel manages.
-`.htaccess` files in subfolders of `public/`, such as `blogs/.htaccess`, are
-deployed. `gallery/` is the public WordPress gateway and `wp/` is the physical
-WordPress core/admin install.
+`/.htaccess` and `/index.php` are the root `.htaccess` and the WordPress loader
+in the document root; `bas-site-ops` keeps them (`docs/site-addresses.md`,
+SA-21 and SA-22). `.htaccess` files in subfolders of `public/`, such as
+`blogs/.htaccess`, are deployed. `wp/` is the WordPress core and admin install.
+`gallery/` is excluded so that a deploy never writes there; `/gallery/` is a
+WordPress page.
 
-## Blogs Gateway
+## Article Listing
 
-`public/blogs/index.html` is the static blog listing at
-`https://bas.org.in/blogs/`. Articles are WordPress posts in the Articles
-category, with the address `https://bas.org.in/blogs/<post name>/`.
-`public/blogs/.htaccess` is the gateway for these addresses. A request for a
-path that is not a file or a folder in `blogs/` loads WordPress through
-`/gallery/index.php`. WordPress then shows the article. The file also refuses
-author scans, the REST user list, `xmlrpc.php` and `.ht*` files, as the
-gallery gateway does.
+`public/blogs/index.html` is the static article listing at
+`https://bas.org.in/blogs/`. It reads the published articles from the
+WordPress REST API at `/wp-json/`, with topic links and page links
+(`bas-site-ops` `docs/article-addresses.md`, AA-20 to AA-34). Articles are
+WordPress posts in the Articles category, with the address
+`https://bas.org.in/blogs/<post name>/`.
 
-Deploy the gateway before the WordPress code that gives articles their
-`/blogs/` address. Until that code is active, WordPress redirects a
-`/blogs/<post name>/` request to the `/gallery/` address of the post, or shows
-its 404 page.
+`public/blogs/.htaccess` has no rewrite rules. The root `.htaccess` sends a
+path that is not a file in `blogs/` to WordPress, which shows the article. The
+file refuses `xmlrpc.php` and `.ht*` files.
 
 Check after a deploy:
 
@@ -99,12 +99,12 @@ curl -sI "https://bas.org.in/blogs/no-such-article/?author=1" | head -1
 ```
 
 The first command prints `HTTP/2 200` (the static listing). The second prints
-`HTTP/2 404` and a `link:` line that names `/gallery/wp-json/`, so the 404 page
-comes from WordPress. The third prints `HTTP/2 403`.
+`HTTP/2 404` and a `link:` line that names `/wp-json/`, so the 404 page comes
+from WordPress. The third prints `HTTP/2 403` (no author scans, SA-7).
 
-Rollback: delete `public_html/blogs/.htaccess` on the server over SSH. The
-deploy does not delete files, so a deploy of an older commit leaves the file in
-place. Without the file, `/blogs/<post name>/` returns the Apache 404 page.
+After a change to `assets/css/bas-site.css` or `assets/js/bas-wp-posts.js`,
+purge their addresses in the Cloudflare cache (`bas-site-ops`
+`ops/deployment.md`).
 
 ## PDFs
 
