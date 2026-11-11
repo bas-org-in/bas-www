@@ -868,6 +868,14 @@ html[data-theme="dark"] .bas-site-nav__brand::before {
   text-decoration: none;
 }
 
+/* Links between pages of the article list (AA-33). */
+.bas-wp-posts__pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bas-space-2) var(--bas-space-5);
+  margin-top: var(--bas-space-5);
+}
+
 .bas-wp-posts {
   margin: var(--bas-gap-flow) 0 var(--bas-space-6);
 }
