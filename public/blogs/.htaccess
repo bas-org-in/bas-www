@@ -1,6 +1,6 @@
 # Article listing of bas.org.in.
 #
-# /blogs/ and the other files in this folder are static pages. Articles
+# /blogs and the other files in this folder are static pages. Articles
 # are WordPress posts in the Articles category, with the address
 # /blogs/<post name>/. This file has no rewrite rules, so the root
 # .htaccess sends a path that is not a file here to WordPress

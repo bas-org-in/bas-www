@@ -10,30 +10,12 @@
 
     <title>BAS Blogs</title>
 
-    <script src="/assets/js/bas-theme.js"></script>
+    <!--#include virtual="/includes/site-assets.html" -->
     <script src="/assets/js/bas-wp-posts.js" defer></script>
-    <link rel="stylesheet" href="/assets/css/tokens.css">
-    <link rel="stylesheet" href="/assets/css/bas-site.css">
   </head>
   <body class="bas-page bas-page--wide">
-    <!-- BAS_GLOBAL_NAV_START -->
-    <nav class="bas-site-nav" aria-label="BAS site sections">
-      <div class="bas-site-nav__inner">
-        <a class="bas-site-nav__brand" href="/">Bangalore Astronomical Society</a>
-        <div class="bas-site-nav__links">
-          <a href="/">Home</a>
-          <a href="/events/">Events</a>
-          <a href="/tools/">Tools</a>
-          <a href="/policy/">Policy</a>
-          <a href="/historic/">Historic</a>
-          <a href="/pages/">Pages</a>
-          <a href="/gallery/">Gallery</a>
-          <a href="/blogs/" aria-current="page">Blogs</a>
-        </div>
-        <button class="bas-theme-toggle" type="button" data-bas-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode"><span class="bas-theme-toggle__icon" aria-hidden="true">&#9790;</span></button>
-      </div>
-    </nav>
-    <!-- BAS_GLOBAL_NAV_END -->
+    <!--#set var="BAS_NAV_CURRENT" value="blogs" -->
+    <!--#include virtual="/includes/global-nav.html" -->
 
     <main class="bas-page__main">
       <header class="bas-page-header">

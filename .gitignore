@@ -1,7 +1,7 @@
 /public/bootstrap/
 /public/font-awesome-4.7.0/
 /node_modules/
-
+.DS_Store
 # Large media pending an explicit Git LFS or external storage decision.
 /public/files/BASWinterAdvanced.pdf
 /public/files/BASWinterBeginner.pdf
