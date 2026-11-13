@@ -15,14 +15,7 @@ the checks and the deployment.
 
 ## Pull Requests
 
-Every change goes through a pull request that a maintainer reviews and
-merges. Follow `docs/pull-requests.md` in `bas-org-in/bas-site-ops`:
-
-- Work on a branch named `<type>/<short-topic>`, never on `main`.
-- Fill in every section of the pull request template.
-- Before you open the pull request, review the change with
-  `skills/bas-pr-review/SKILL.md` in `bas-site-ops`, and fix what it
-  finds.
-- Do not change workflows, `.htaccess` files or deploy scripts without a
-  maintainer's agreement.
-- Do not merge your own pull request.
+Every change goes through a pull request. The rules, including who
+merges a pull request and when, are in `docs/pull-requests.md` of
+`bas-org-in/bas-site-ops`. Review a change with
+`skills/bas-pr-review/SKILL.md` of that repository.
