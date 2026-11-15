@@ -5,5 +5,6 @@
     // 80-character limit.
     "MD013": { "tables": false, "code_blocks": false }
   },
-  "ignores": ["public/bootstrap/**", "public/font-awesome-4.7.0/**", "node_modules/**"]
+  "ignores": ["public/bootstrap/**", "public/font-awesome-4.7.0/**", "node_modules/**",
+    "public/historic/**", "public/pages/**", "public/policy/**", "public/tools/**"]
 }

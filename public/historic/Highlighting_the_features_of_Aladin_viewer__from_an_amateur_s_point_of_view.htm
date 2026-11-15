@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Highlighting the features of Aladin viewer, from an amateur's point-of-view -- Bangalore Astronomical Society (old pages)</title>
+  <script src="/assets/js/bas-theme.js"></script>
+  <link rel="stylesheet" href="/assets/css/bas-site.css">
+</head>
+
+<body class="bas-page bas-page--historic bas-page--legacy">
+<!-- BAS_GLOBAL_NAV_START -->
+<nav class="bas-site-nav" aria-label="BAS site sections">
+  <div class="bas-site-nav__inner">
+    <a class="bas-site-nav__brand" href="/">Bangalore Astronomical Society</a>
+    <div class="bas-site-nav__links">
+      <a href="/">Home</a>
+      <a href="/tools/">Tools</a>
+      <a href="/policy/">Policy</a>
+      <a href="/historic/" aria-current="page">Historic</a>
+      <a href="/pages/">Pages</a>
+    </div>
+    <button class="bas-theme-toggle" type="button" data-bas-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode"><span class="bas-theme-toggle__icon" aria-hidden="true">&#9790;</span></button>
+  </div>
+</nav>
+<!-- BAS_GLOBAL_NAV_END -->
+<main class="bas-page__main">
+
+
+  <h1>Highlighting the features of Aladin viewer, from an amateur's point-of-view</h1><br />
+   <hr />
+By akarshsimha; Published 04 Dec 2011<br />
+<br />
+I'd like to showcase the features of Aladin viewer and how an amateur astronomer could use a professional astronomer's tool. <br /> <br />Aladin is freely downloadable and is distributed under the GNU General Public License -- meaning that it is open source software. It is written in Java, and hence is cross-platform. While it is rather buggy, it is nevertheless usable. <br /> <br />To get Aladin, visit <a href="http://aladin.u-strasbg.fr/aladin.gml">http://aladin.u-strasbg.fr/aladin.gml</a> and download the viewer. You may also use the applet online if you have the necessary Java plugins. <br /> <br />Upon starting Aladin, you should see an interface with a "Location" box on the top. Typing the name / identifier of a deep-sky object in the Location box (as shown in the following image) and hitting enter will load an image of the object. Use the tools in the menu on the right side (Select, Pan, Zoom etc) to pan / zoom etc. <br /><br /> <br /><a href="/historic/Home/files/Aladin/Aladin-4.png"><img src="/historic/Home/files/Aladin/Aladin-4.png" width=300 /></a> <br /> <br />Aladin requires an internet connection to work, since it actually fetches the images / data from sky surveys like the DSS. <br /> <br />To plot cataloged objects in the field-of-view, overlay data from SIMBAD by clicking on the "Simbad" button below the Location box. After loading the Simbad layer, you should see objects being plotted with red squares / points etc, as shown below: <br /><br/> <br /><a href="/historic/Home/files/Aladin/Aladin-5.png"><img src="/historic/Home/files/Aladin/Aladin-5.png" width=300 /></a> <br />You can similarly overlay 2MASS to see all 2MASS survey objects (which includes infrared sources). <br /> <br />Clicking on any of those plotted objects will give you a lot of data about the object. You may use the Select tool from the right-hand side toolbar to select a region and list all objects within that region: <br /><br /> <br /><a href="/historic/Home/files/Aladin/Aladin-2.png"><img src="/historic/Home/files/Aladin/Aladin-2.png" width=300 /></a> <br /><br /> <br /><a href="/historic/Home/files/Aladin/Aladin-6.png"><img src="/historic/Home/files/Aladin/Aladin-6.png" width=300 /></a> <br /><br /> <br /> <br />The list of selected objects can be sorted by each of the parameters. Most useful for the amateur, will be sorting by 'B' and 'V' which are the Blue and Visual (Yellow) magnitudes of the object. Sometimes, either magnitude may be undefined, so it is best to try sorting by both to get an accurate idea of what are the brightest objects in the field. Clicking on any of the object's identifiers in the list will take you to an webpage with its properties. <br /> <br />SIMBAD has more objects than the amateur will almost ever need. Here's a look at what objects are cataloged by SIMBAD in the region of M 33: <br /><br /> <br /><a href="/historic/Home/files/Aladin/Aladin-7.png"><img src="/historic/Home/files/Aladin/Aladin-7.png" width=300 /></a> <br /><br /> <br /> <br />Usually, amateur astronomers would be interested only in objects like globular clusters and nebulae within another galaxy. So to view only the extragalactic globular clusters and nebulae in M 33, one would create a filter. Click on the Simbad layer in the list of layers on the extreme right and click on the 'Filter' option in the toolbar. There are a lot of example filters, in the Advanced tab. For this particular case, click on the Advanced tab. We now select the "Select Object Type" filter in the drop-down menu to suit our needs: <br /><pre> <br /># Obj.Type <br /># We draw a different symbol according to <br /># the object type (value of the column with UCD "src.class") <br />$[src.class]="GlCl" {draw yellow square} <br />$[src.class]="H II" {draw blue rhomb} <br /># etc ... <br /></pre> <br /><br /> <br /><a href="/historic/Home/files/Aladin/Aladin-10.png"><img src="/historic/Home/files/Aladin/Aladin-10.png" width=300 /></a> <br /><br /> <br /> <br />Now, click on the 'Export' button below the filter entry field. It will create an extra layer containing all the objects that match the filter's criteria. <br /> <br />You may now hide both the 'Simbad' and the first Filter layer (in my example, named 'Obj.Type') and show only the filtered objects ('Filter.src') layer. This way you will see only the objects that met our criterion. Now, you can select all objects in the region of interest using the select tool, and sort by V / B magnitude etc: <br /><br /> <br /><a href="/historic/Home/files/Aladin/Aladin-9.png"><img src="/historic/Home/files/Aladin/Aladin-9.png" width=300 /></a> <br /><br /> <br /> <br />Aladin can also be operated in full screen mode. Locate the full screen mode icon on the top right corner of the window (usually below the maximize / minimize / restore buttons in Windows / Linux): <br /><a href="/historic/Home/files/Aladin/Aladin-8.png"><img src="/historic/Home/files/Aladin/Aladin-8.png" width=300 /></a> <br /> <br />And of course, you can save images to make finder charts out of them!
+
+
+</main>
+</body>
+</html>

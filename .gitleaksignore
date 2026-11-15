@@ -1,0 +1,8 @@
+# Findings that are not secrets. These archived pages (public/historic/)
+# hold the public form keys of old Google Forms and a Picasa album link
+# key from 2009-2010. The pages are public on the live site, and the
+# services are retired.
+public/historic/City_Observation_.htm:generic-api-key:35
+public/historic/Venus_Transit_Workshop.htm:generic-api-key:35
+public/historic/Venus_Transit_Workshop___REPEATED_Session__.htm:generic-api-key:35
+public/historic/Valentines_Day___VBO__Kavalur__Observing_report___13th_Feb__10.htm:generic-api-key:35

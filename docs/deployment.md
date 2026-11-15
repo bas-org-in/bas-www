@@ -13,7 +13,8 @@ Use the `Deploy BAS main site to BigRock` workflow:
 
 The workflow:
 
-- prepares a temporary deploy tree from `public/`;
+- prepares a temporary deploy tree from `public/`, including the archived
+  subsites `historic/`, `pages/`, `policy/` and `tools/`;
 - installs Bootstrap 3.4.1 and Font Awesome 4.7.0 into the legacy root paths;
 - connects to BigRock over SSH;
 - syncs the prepared tree to the configured `public_html` path.
@@ -106,10 +107,36 @@ After a change to `assets/css/bas-site.css` or `assets/js/bas-wp-posts.js`,
 purge their addresses in the Cloudflare cache (`bas-site-ops`
 `ops/deployment.md`).
 
+## Archived Subsites
+
+`public/historic/`, `public/pages/`, `public/policy/` and `public/tools/` are
+the former subdomain sites, served at `/historic/`, `/pages/`, `/policy/` and
+`/tools/`. Their import notes are in `docs/import/`. The deploy uploads them
+with the rest of `public/`.
+
+- The server folders also hold third-party files that are not in git: the
+  OpenSans fonts and Respond.js of `/pages/` and the Bootstrap 2 files of
+  `/tools/logbooks/`. `install-vendor.sh` of `bas-site-ops` installs them.
+  The sync does not delete them, because it does not use `--delete`.
+- `historic/.htaccess` holds redirects for renamed posts. It is deployed.
+- PDFs in these folders are not deployed (see "PDFs").
+
+Check after a deploy:
+
+```sh
+curl -s -o /dev/null -w '%{http_code}\n' https://bas.org.in/pages/
+curl -s -o /dev/null -w '%{http_code} %{redirect_url}\n' https://bas.org.in/historic/Venues.htm
+curl -s -o /dev/null -w '%{http_code}\n' https://bas.org.in/historic/VENUES.htm
+```
+
+The first and third commands print `200`. The second prints `301` and the
+address of `Venues_2009-09-12.htm`.
+
 ## PDFs
 
 Normal site PDFs, including the overview presentation and membership form, are
-included in the default deploy. The large winter PDFs are excluded by default
+included in the default deploy. PDFs in the archived subsite folders are left
+out; the live subsite folders have none. The large winter PDFs are excluded by default
 because they are managed separately. Enable `include_large_pdfs` only when those
 large files intentionally need to be refreshed from this repo.
 

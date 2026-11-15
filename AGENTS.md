@@ -12,6 +12,11 @@ the checks and the deployment.
 - Take every colour, size, spacing and radius from
   `public/assets/css/tokens.css`. Other stylesheets use only `var(--bas-...)`.
 - Deploy only through the guarded workflow in `docs/deployment.md`.
+- `public/historic/`, `public/pages/`, `public/policy/` and `public/tools/`
+  are archived pages of the former subdomain sites. The checks skip them.
+  Change only what a pull request is for, and record renamed or removed
+  files in `docs/import/<site>.md`. Do not commit their third-party files;
+  `.gitignore` lists them.
 
 ## Pull Requests
 

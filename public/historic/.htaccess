@@ -1,0 +1,16 @@
+# Redirects of the historic archive, served at https://bas.org.in/historic/.
+#
+# Three pairs of posts had names that differ only in letter case. Windows
+# and the default macOS file system cannot hold both names of a pair in one
+# folder, so one post of each pair has a new name with its date. These
+# rules send the old addresses to the new names with a permanent redirect.
+#
+# The patterns are anchored and case-sensitive, so they match only the old
+# names. The other post of each pair keeps its address:
+#   BAS_Meeting.htm, Hi_Everyone.htm and VENUES.htm.
+
+<IfModule mod_alias.c>
+RedirectMatch 301 ^/historic/BAS_meeting\.htm$ /historic/BAS_meeting_2008-11-08.htm
+RedirectMatch 301 ^/historic/Hi_everyone\.htm$ /historic/Hi_everyone_2008-03-29.htm
+RedirectMatch 301 ^/historic/Venues\.htm$ /historic/Venues_2009-09-12.htm
+</IfModule>

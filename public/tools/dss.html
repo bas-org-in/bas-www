@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- Copyright (c) 2016 Akarsh Simha; akarsh AT kde DOT org. License: WTFPL -->
+    <title>Akarsh's DSS Query: An amateur-friendly DSS query</title>
+    <style>
+      .button {
+          background-color: #220000;
+          color: #ff0000;
+          border: 2px solid #440000;
+          text-decoration: none;
+          padding: 2px 6px 2px 6px;
+      };
+    </style>
+    <style>
+      .attention {
+          border: 2px solid red;
+      };
+    </style>
+    <style>
+      .changed {
+          background-color: #ffbb55;
+      };
+    </style>
+    <style>
+      .suppress {
+          color: gray;
+      };
+    </style>
+    <!-- Following CSS Copied from https://codepen.io/bellarose/pen/EKKaZb -->
+    <!-- It is determined to be under MIT License by codepen.io rules for public posts -->
+    <style>
+      .container-info {
+          display: inline-block;
+          position: relative;
+          width: 100%;
+          min-height: 480px;
+      }
+      @media (min-width: 480px) {
+          .container-info {
+              float: left;
+              /*position: fixed;*/
+              left: 0;
+              top: 0;
+              height: 100%;
+	      width: 65%;
+	  } }
+
+
+
+      .container-main {
+          display: inline-block;
+          position: relative;
+          width: 100%;
+          min-height: 480px;
+      }
+      @media (min-width: 600px) {
+          .container-main {
+              float: right;
+              /*position: fixed;*/
+              right: 0;
+              top: 0;
+              height: 100%;
+	      width: 35%;
+	  } }
+    </style>
+    
+
+
+
+      <!-- Source LST calculator by Rekhesh Mohan with some modifications and fixes -->
+      <!-- This script is used with express permission -->
+      <script type="text/javascript" src="calclst.js" ></script>
+
+      <script type="text/javascript">
+
+        const rad_to_deg = 180.0 / Math.PI;
+
+        function getXMSString( value ) {
+            var sgn = (value > 0 ? '' : '-' );
+            var val = Math.abs( value );
+            var X = Math.floor( val );
+            var min = (val - X) * 60.0;
+            var M = Math.floor( min );
+            var sec = +(val * 3600 - X * 3600 - M * 60).toFixed(1);
+            return sgn + X.toString() + ":" + (M < 10 ? '0' : '') + M.toString() + ":" + (sec < 10 ? '0' : '') + sec.toFixed(2);
+        }
+        window.addEventListener("resize", updateCanvas);
+
+        function updateCanvas() {
+            var canvas = document.getElementById("canvas");
+            var parent = canvas.parentNode;
+
+            // Hide the canvas so we can get the parent's responsive bounds
+            var displayBackup = canvas.style.display;
+            canvas.style.display = "none";
+
+            var w = parent.clientWidth;
+            var h = parent.clientHeight;
+
+            // FIXME : Do something more intelligent
+            canvas.width = 0.6 * w;
+            canvas.height = 0.6 * w;
+
+            // Restore the canvas display property
+            canvas.style.display = displayBackup;
+            draw();
+        }
+
+var annotations = [];
+var objects = [];
+
+        function annotate(x, y) {
+            // Adds an annotation text input by the user
+            let annot = prompt("Enter the annotation desired", (clickObject ? " " + clickObject.id : ""));
+	    if (annot) {
+		annotations.push({
+                    'x': x,
+                    'y': y,
+                    'text': annot,
+		});
+		draw();
+	    }
+        }
+
+
+function radec_to_xy(jradeg_, jdedeg_) {
+    // Converts (ra, dec) -> (x, y) in image coordinates
+    let canvas = document.getElementById("canvas");
+    var w = canvas.width; var h = canvas.height;
+
+    const dRA = jradeg_ - jradeg;
+    const dDec = jdedeg_ - jdedeg;
+
+    const y =  -(dDec * h * 60) / imagesize;
+    const x =  -(w * 60 * Math.cos( (jdedeg + dDec) * Math.PI / 180.0 )) * dRA / imagesize;
+
+    return {
+	'x': x,
+	'y': y,
+    }
+}
+
+function annotate_radec() {
+    let annot = prompt("Enter the desired point to mark as comma-separated ra,dec,text. Coordinates in decimal degrees, J2000.0", "288.37,-14.5,Example");
+    if (annot) {
+	const _data = annot.split(',');
+	try {
+	    if (_data.length != 3) {
+		throw "Invalid format";
+	    }
+	    _ra = parseFloat(_data[0]);
+	    _dec = parseFloat(_data[1]);
+	}
+	catch (err) {
+	    window.alert("Invalid input format!");
+	}
+	converted = radec_to_xy(_ra, _dec);
+	objects.push({
+	    'x': converted.x,
+	    'y': converted.y,
+	    'text': _data[2],
+	});
+	draw();
+    }
+}
+
+
+        // Inspired by http://phrogz.net/tmp/canvas_zoom_to_cursor.html
+        var handleScroll = function(evt){
+            var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
+            if (delta) {
+                let zoomFactor = document.getElementById("zoom").value;
+                let old_x = zoomAffine.x;
+                let old_y = zoomAffine.y;
+                let canvas = document.getElementById("canvas");
+                let w = canvas.width;
+                let h = canvas.height;
+                let x = evt.offsetX - w/2;
+                let y = evt.offsetY - h/2;
+                let zoomStep = Math.pow(1.05, delta);
+                zoomAffine = {
+                    'x': zoomStep * old_x + (1 - zoomStep) * x,
+                    'y': zoomStep * old_y + (1 - zoomStep) * y
+                };
+                document.getElementById("zoom").value *= zoomStep;
+                draw();
+            }
+            return evt.preventDefault() && false;
+        };
+
+        var zoomAffine = {'x': 0, 'y': 0}
+
+        function getTransformedPoint(matrix, x, y) {
+            return {
+                x: matrix.a * x + matrix.c * y + matrix.e,
+                y: matrix.b * x + matrix.d * y + matrix.f,
+            };
+        }
+
+        function invertAffineTransform(matrix) {
+            let a = matrix.a, b = matrix.b, c = matrix.c, d = matrix.d, e = matrix.e, f = matrix.f;
+            let dt = a * d - b * c;
+            return {
+                'a': d/dt,
+                'b': -b/dt,
+                'c': -c/dt,
+                'd': a/dt,
+                'e': (c * f - d * e) / dt,
+                'f': -(a * f - b * e) / dt
+            };
+        }
+	var clickObject = undefined;
+        function draw() {
+            var canvas = document.getElementById("canvas");
+            var image = document.getElementById("dss");
+	    let imageIsLoaded = image.complete && image.naturalHeight !== 0;
+	    if (!imageIsLoaded) {
+		return;
+	    }
+            if (canvas.getContext) {
+                var ctx = canvas.getContext("2d");
+                ctx.save();
+                ctx.setTransform( 1, 0, 0, 1, 0, 0 );
+                ctx.fillStyle="black";
+                ctx.fillRect(0, 0, canvas.width, canvas.height );
+
+                // Make the transformations
+                var angle = document.getElementById("rotationSlider").value * Math.PI/180;
+                var w = canvas.width; var h = canvas.height;
+                var zoomFactor = document.getElementById("zoom").value;
+                let flipped = document.getElementById("flipCheck").checked;
+                ctx.translate( w/2, h/2 );
+                ctx.transform(zoomFactor, 0, 0, zoomFactor, zoomAffine.x, zoomAffine.y);
+                var zoomTransform = {'a': zoomFactor, 'b': 0, 'c': 0, 'd': zoomFactor, 'e': zoomAffine.x, 'f': zoomAffine.y };
+                if( flipped ) {
+                    ctx.transform(1,0,0,-1,0,0);
+                }
+                ctx.rotate( angle );
+
+                // Draw the image
+                let width  = w; let height = h;
+                ctx.drawImage( image, -width/2, -height/2, width, height );
+
+                // FOV circle
+                var invert = ( document.getElementById("invertCheck").checked )
+                ctx.strokeStyle = (invert ? "yellow" : "red" );
+                ctx.lineWidth = 2/zoomFactor;
+                ctx.beginPath();
+                var circsize = (document.getElementById("fov").value/imagesize) * width;
+                ctx.arc(0, 0, circsize/2, 0, 2 * Math.PI );
+                ctx.stroke();
+
+                // North marker
+                var markNorth = document.getElementById("northCheck").checked;
+                if( markNorth ) {
+                    ctx.beginPath();
+                    ctx.moveTo( 0, -h/2 + 10 );
+                    ctx.lineTo( -5, -h/2 + 26 );
+                    ctx.lineTo( 5, -h/2 + 26 );
+                    ctx.lineTo( 0, -h/2 + 10 );
+                    ctx.stroke();
+                }
+
+                // Draw cross-hairs
+                if( typeof window.clickX !== 'undefined' && typeof window.clickY !== 'undefined' ) {
+                    let x = window.clickX; // these are in image coords
+                    let y = window.clickY; // 
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(-angle);
+                    ctx.scale(1/zoomFactor, 1/zoomFactor);
+
+                    ctx.strokeStyle = (invert ? "yellow" : "red" );
+                    ctx.lineWidth = 2;
+
+                    ctx.beginPath();
+                    ctx.moveTo( - 12, 0 );
+                    ctx.lineTo( - 24, 0 );
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo( 0, - 12 );
+                    ctx.lineTo( 0, - 24 );
+                    ctx.stroke();
+
+                    ctx.restore();
+                }
+
+                // Draw annotations
+                for (idx in annotations) {
+                    let annotation = annotations[idx];
+                    ctx.save();
+                    if (flipped) {
+                        ctx.transform(1, 0, 0, -1, 0, 0);
+                    }
+                    ctx.translate( annotation.x, annotation.y );
+                    ctx.rotate( -angle );
+                    ctx.scale(1/zoomFactor, 1/zoomFactor);
+
+                    ctx.font = document.getElementById('annotFontSize').value + 'px serif';
+                    ctx.fillStyle = (invert ? "yellow" : "red" );
+                    ctx.fillText(annotation.text, 0, 0);
+
+                    ctx.restore();
+                }
+
+		// Draw objects
+		for (idx in objects) {
+		    let annotation = objects[idx];
+		    const boxSize = 10.;
+		    ctx.save();
+		    if (flipped) {
+                        ctx.transform(1, 0, 0, -1, 0, 0);
+                    }
+                    ctx.translate( annotation.x, annotation.y );
+                    ctx.rotate( -angle );
+                    ctx.scale(1/zoomFactor, 1/zoomFactor);
+
+                    ctx.strokeStyle = (invert ? "yellow" : "red" );
+                    ctx.lineWidth = 1.;
+		    ctx.beginPath();
+		    ctx.moveTo(-boxSize/2., -boxSize/2.);
+		    ctx.lineTo(boxSize/2., -boxSize/2.);
+		    ctx.lineTo(boxSize/2., boxSize/2.);
+		    ctx.lineTo(-boxSize/2., boxSize/2.);
+		    ctx.lineTo(-boxSize/2., -boxSize/2.);
+		    ctx.stroke();
+
+                    ctx.font = document.getElementById('annotFontSize').value + 'px serif';
+                    ctx.fillStyle = (invert ? "yellow" : "red" );
+                    ctx.fillText(annotation.text, 15, 0);
+
+                    ctx.restore();
+		}
+
+                // Color Inversion and Contrast
+                contrast = document.getElementById( 'contrast' ).value;
+                brightness = parseInt( document.getElementById( 'brightness' ).value );
+                canvas.setAttribute( "style", "-webkit-filter:invert(" + (invert ? 100:0) + "%) contrast(" + (100 + parseInt(contrast)) + "%) brightness(" + (100 + parseInt(brightness)) + "%)" );
+                canvas.setAttribute( "style", "filter:invert(" + (invert ? 100:0) + "%) contrast(" + (100 + parseInt(contrast)) + "%) brightness(" + (100 + parseInt(brightness)) + "%)" );
+            }
+        }
+
+        function centerClick() {
+            document.getElementById('objid').value = getXMSString( jrah + window.dRA ) + ' ' + getXMSString( jdedeg + window.dDec );
+	    resolve();
+	    updateCanvas();
+        }
+
+	const catalogPrecedence = ["HIP", "M", "NGC", "IC", "Sh2", "UGC", "HCG", "Arp", "MCG", "VV", "Z", "PGC", "HD", "SAO", "CGPG", "Rose", "ACO", "Shk", "Sh2", "LBN", "vdB", "PN A66", "PK", "PNG", "LEDA", "TYC", "SDSS", "2MASS", "2MASX"];
+	const catalogPrecedenceSimbad = encodeURIComponent(catalogPrecedence.slice(0, 15).join('|') + '|1');
+	let invCatalogPrecedence = {}
+	for (var idx = 0; idx < catalogPrecedence.length; ++idx) {
+	    invCatalogPrecedence[catalogPrecedence[idx]] = idx;
+	}
+
+        function clickedPointUpdate( event ) {
+            if( event.which != 1 )
+                return;
+            // Get coordinates
+            var x = event.offsetX;
+            var y = event.offsetY;
+
+            // Map to source
+            /*
+              var angle = document.getElementById("rotationSlider").value * Math.PI/180;
+              var w = canvas.width; var h = canvas.height;
+              var zoomFactor = document.getElementById("zoom").value;
+              var sourceX = x - w/2;
+              var sourceY = y - w/2;
+              if( document.getElementById("flipCheck").checked ) {
+              sourceY = -sourceY;
+              }
+              sourceX /= zoomFactor;
+              sourceY /= zoomFactor;
+              var sX = sourceX; var sY = sourceY;
+              sourceX = sX * Math.cos( angle ) + sY * Math.sin( angle );
+              sourceY = -sX * Math.sin( angle ) + sY * Math.cos( angle );
+              window.clickX = sourceX;
+              window.clickY = sourceY;
+            */
+	    let canvas = document.getElementById("canvas");
+            var w = canvas.width; var h = canvas.height;
+            ctx = canvas.getContext("2d");
+            window.clickPoint = getTransformedPoint(invertAffineTransform(ctx.getTransform()), x, y);
+            x = window.clickX = window.clickPoint.x;
+            y = window.clickY = window.clickPoint.y;
+
+            var dDec = -(y * imagesize)/(h * 60);
+            var dRA = -(x * imagesize)/(w * 15 * 60 * Math.cos( (jdedeg + dDec) * Math.PI / 180.0 ) );
+            window.dRA = dRA;
+            window.dDec = dDec;
+	    let clickRA = jrah + dRA;
+	    let clickDec = jdedeg + dDec;
+	    let clickRADeg = clickRA * 15.0;
+	    let clickRA_HMS = getXMSString(clickRA);
+	    let clickDec_DMS = getXMSString(clickDec);
+            coordMenu = document.getElementById("clickCoords");
+	    coordMenu.innerHTML = '';
+            if ((jdedeg > 85 || jdedeg < -85) && (dss_version == 2 || dss_version == 3)) {
+                coordMenu.innerHTML = "<div style=\"color:red;\">Warning: Crosshair coordinates wildly inaccurate near poles with POSS I.</div>";
+            } 
+            coordMenu.innerHTML += (
+                '<br /><strong>Approximate crosshair position (J2000):</strong> '  + clickRA_HMS + '&nbsp;&nbsp;' + clickDec_DMS + ' <a class="button" href="#" onClick="delete window.clickX; delete window.clickY; draw();">Clear</a><br /><br />' +
+                    '&nbsp; Actions: <a href="#" class="button" onclick="centerClick()">Center</a> ' +
+                    '<a class="button" href="https://simbad.u-strasbg.fr/simbad/sim-coo?Coord=' + encodeURIComponent(clickRADeg.toString()) + ' ' + encodeURIComponent(clickDec.toString()) + '&Radius=2" target="_blank" >SIMBAD</a> ' +
+		    '<a class="button" href="https://ned.ipac.caltech.edu/cgi-bin/objsearch?search_type=Near+Position+Search&in_csys=Equatorial&in_equinox=J2000.0&lon=' + encodeURIComponent(clickRADeg.toString()) + 'd&lat=' + encodeURIComponent(clickDec.toString()) + 'd&radius=2.0&out_csys=Equatorial&out_equinox=J2000.0" target="_blank">NED</a> ' +
+                    '<a class="button" href="https://ps1images.stsci.edu/cgi-bin/ps1cutouts?pos=' + encodeURIComponent(clickRA_HMS) + ' ' + encodeURIComponent(clickDec_DMS) + '&filter=color&filter=g&filter=r&filter=i&filter=z&filter=y&filetypes=stack&auxiliary=data&size=' + (parseInt( imagesize ) * 60 * 4).toString() + '&output_size=512&verbose=0&autoscale=99.500000&catlist=" target="_blank" >PanSTARRS-1</a> ' +
+                    '<a class="button" href="https://hla.stsci.edu/hlaview.html#Inventory|filterText%3D%24filterTypes%3D|query_string=&posfilename=&poslocalname=&posfilecount=&listdelimiter=whitespace&listformat=degrees&RA=' + encodeURIComponent(clickRADeg.toString()) + '&Dec=' + encodeURIComponent(clickDec.toString()) + '&Radius=0.200000&inst-control=all&inst=ACS&inst=ACSGrism&inst=WFC3&inst=WFPC2&inst=NICMOS&inst=NICGRISM&inst=COS&inst=WFPC2-PC&inst=STIS&inst=FOS&inst=GHRS&imagetype=best&prop_id=&spectral_elt=&proprietary=both&preview=1&output_size=256&cutout_size=12.8|ra=&dec=&sr=&level=&image=&inst=ACS%2CACSGrism%2CWFC3%2CWFPC2%2CNICMOS%2CNICGRISM%2CCOS%2CWFPC2-PC%2CSTIS%2CFOS%2CGHRS&ds=" target="_blank">HLA</a> ' +
+                    '<a class="button" onClick="annotate(' + x + ',' + y + ');" href="#">Annotate</a>'
+            );
+	    clickObject = undefined;
+	    clickObjDistance = undefined;
+	    clickObjResolver = undefined;
+	    const queryRadius = 120.0; // arcseconds
+	    document.getElementById('clickObj').innerHTML = '';
+
+	    let coordSearch = function(resolverUrl, callback) {
+		// Uses the VOTable result from resolverUrl and feeds callback(mainIdentifier, angularDistanceFromQueryPoint)
+		let coordResolutionRequest = new XMLHttpRequest();
+		let xhr = new XMLHttpRequest();
+		xhr.open('GET', resolverUrl);
+		xhr.responseType = 'document';
+		xhr.overrideMimeType('text/xml');
+		xhr.onload = function() {
+		    if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+			result = findBestObjectNearClick(translateToCommonFormat(extractInfoFromVoTable(xhr.responseXML)));
+			if (result.length > 0 && (result[0].MAIN_ID)) {
+			    callback(result[0].MAIN_ID, result[0].ANG_DIST);
+			} 
+		    }
+		}
+		xhr.send();
+	    }
+	    // FIXME: If SIMBAD ever starts honoring list.idcat and list.idopt parameters in VOTable output format, it is worth appending this to the url
+	    // "list.idsel=on&list.idopt=CATLIST&list.idcat=..."; where we replace ... by the catalogPrecedence array joined by commas.
+	    // let simbadCoordSearch = "https://simbad.u-strasbg.fr/simbad/sim-coo?output.format=votable&Coord=" + encodeURIComponent(clickRA_HMS) + " " + encodeURIComponent(clickDec_DMS) + "&Radius=" + (queryRadius/60.0).toFixed(2) + "&Radius.unit=arcmin&output.max=5";
+	    let simbadCoordSearch = (
+		"https://simbad.u-strasbg.fr/simbad/sim-script?script=output%20console=off%20script=off%0Avotable%20v1%20{%0Aid(" + catalogPrecedenceSimbad +
+		    ")%0Aangdist%0A}%0Avotable%20open%20v1%0Aquery%20coo%20" + encodeURIComponent(clickRA_HMS) + "%20" + encodeURIComponent(clickDec_DMS) + "%20radius=" + (queryRadius/60.0).toFixed(2) + "%0Avotable%20close%0A" // output max defaults to 10, I believe
+	    );
+
+	    // FIXME: As of this writing, NED does not allow
+	    // Cross-origin calling of its API (CORS headers), which
+	    // means that browsers will block us trying to query
+	    // NED. If NED ever enables it, just uncomment this block
+	    // of code and things should work
+
+	    /*
+	    let nedCoordSearch = "https://ned.ipac.caltech.edu/cgi-bin/objsearch?search_type=Near+Position+Search&in_csys=Equatorial&in_equinox=J2000.0&lon=" + encodeURIComponent(clickRADeg.toString()) + "d&lat=" + encodeURIComponent(clickDec.toString()) + "d&radius=2.0&out_csys=Equatorial&out_equinox=J2000.0&of=xml_main";
+	    coordSearch(nedCoordSearch, function(id, dist) {
+		if (!clickObject)
+		    clickObject = {};
+		clickObject.id = id; // NED has precedence, overwrites SIMBAD
+		clickObject.dist = dist;
+		clickObject.resolver = "NED";
+		clickObject.ned_id = id;
+		clickObject.ned_dist = dist;
+		updateClickObject();
+	    });
+	    */
+	    coordSearch(simbadCoordSearch, function(id, dist) {
+		if (!clickObject)
+		    clickObject = {};
+		clickObject.simbad_id = id;
+		clickObject.simbad_dist = dist;
+		if (!clickObject.id) { // SIMBAD defers to NED if already filled out by NED
+		    clickObject.id = id;
+		    clickObject.dist = dist;
+		    clickObject.resolver = "SIMBAD";
+		}
+		updateClickObject();
+	    });
+	    
+            draw();
+        }
+
+	function updateClickObject() {
+	    const simbadIdSearch = "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=";
+	    const nedIdSearch = "http://ned.ipac.caltech.edu/cgi-bin/objsearch?objname=";
+	    if (clickObject) {
+		document.getElementById('clickObj').innerHTML = 'Main object near crosshair: ' +
+		    '<a href="' + (clickObject.resolver == "NED" ? nedIdSearch : simbadIdSearch) + encodeURIComponent(clickObject.id) + '" target="_blank">' + clickObject.id + '</a> (' + clickObject.dist.toFixed(0) + '" away)';
+	    }
+
+	}
+
+	function inferCatalog(identifier) {
+	    if (identifier.startsWith("PN ")) {
+		return identifier.substring(0, identifier.substring(3).indexOf(' '));
+	    } else {
+		return identifier.replace(/[ +-].*$/, "");
+	    }
+	}
+
+	function findBestObjectNearClick(json) {
+	    const distanceThreshold = 10.0; // arcseconds
+	    for (var idx = 0; idx < json.length; ++idx) {
+		if (json[idx].MAIN_ID.replace(" ", "") == "") {
+		    json[idx].catalogPrecedence =  catalogPrecedence.length + 1;
+		} else {
+		    let p = invCatalogPrecedence[inferCatalog(json[idx].MAIN_ID)];
+		    json[idx].catalogPrecedence = p ? p : catalogPrecedence.length;
+		}
+		json[idx].ANG_DIST = parseFloat(json[idx].ANG_DIST);
+	    }
+	    json = json.sort(function(left, right) {
+		let pLeft = left.catalogPrecedence, pRight = right.catalogPrecedence;
+		let dLeft = left.ANG_DIST, dRight = right.ANG_DIST;
+		if (dLeft > distanceThreshold)
+		    pLeft = catalogPrecedence.length;
+		if (dRight > distanceThreshold)
+		    pRight = catalogPrecedence.length;
+		if (pLeft == pRight)
+		    return dLeft - dRight;
+		return pLeft - pRight;
+	    });
+	    return json;
+	}
+
+	function translateToCommonFormat(json) {
+	    // Renames the following fields:
+	    //   Object Name -> MAIN_ID
+	    //   Separation -> ANG_DIST
+	    // Rest of the fields are left as-is
+	    if (!json.length || json.length == 0)
+		return json;
+	    let id_key, sep_key;
+	    if (json[0].MAIN_ID) {
+		// SIMBAD coord query format; nothing to do;
+		return json;
+	    }
+	    if (json[0]["Object Name"]) {
+		// NED format
+		id_key = "Object Name";
+		sep_key = "Separation";
+	    } else {
+		// SIMBAD script format
+		sep_key = "ANG_DIST";
+		let keys = Object.keys(json[0]);
+		for (var idx = 0; idx < keys.length; ++idx) {
+		    if (keys[idx].startsWith("ID_")) {
+			id_key = keys[idx];
+			break;
+		    }
+		}
+	    }
+	    for (var idx = 0; idx < json.length; ++idx) {
+		json[idx].MAIN_ID = json[idx][id_key];
+		json[idx].ANG_DIST = json[idx][sep_key];
+	    }
+	    return json;
+	}
+
+	function extractInfoFromVoTable(xml) {
+	    result = []
+	    const table = xml.getElementsByTagName('TABLE')[0];
+	    const fields = table.getElementsByTagName('FIELD');
+	    const rows = table.getElementsByTagName('TABLEDATA')[0].getElementsByTagName('TR');
+	    for (var i = 0; i < rows.length; ++i) {
+		row = {}
+		let columns = rows[i].getElementsByTagName('TD');
+		for (var j = 0; j < fields.length; ++j) {
+		    row[fields[j].attributes["name"].value] = columns[j].innerHTML;
+		}
+		result.push(row);
+	    }
+	    return result;
+	}
+
+        function toDMS( angle ) {
+            // FIXME: Does not handle negative angles
+            var d = Math.floor(angle);
+            var m = Math.floor( (angle - d)*60.0 );
+            var s = Math.floor( ((angle - d)*60.0 - m)*60.0 );
+            return d.toFixed() + ":" + ( (m < 10 ) ? "0" : "" ) + m.toFixed() + ":" + ( (s < 10 ) ? "0" : "" ) + s.toFixed();
+        }
+
+        function calculate() {
+	    if( !(document.getElementById( "autoUpdateCheck" ).checked) ) {
+		return updateCanvas();
+	    }
+            setSysTime();
+            olong = ( document.getElementById( "lon" ).value );
+            if( olong < 0.0 )
+                hemi = 'W';
+            else
+                hemi = 'E';
+            calcLST();
+            precessed = precessFromJ2000(jradeg, jdedeg, currJD);
+            precessed_pole = precessFromJ2000(0.0, 90.0, currJD);
+            document.getElementById( "lt" ).innerHTML = toDMS( modDay(hr) );
+            document.getElementById( "lst" ).innerHTML = toDMS( lst );
+            document.getElementById( "ut" ).innerHTML = toDMS( ut );
+            document.getElementById( "jd" ).innerHTML = currJD.toFixed(1);
+            document.getElementById( "currentCoords" ).innerHTML = getXMSString(precessed.radeg/15.0) + "&nbsp;&nbsp;" + getXMSString(precessed.dedeg);
+	    const deg_to_rad = Math.PI / 180.0;
+            var latdeg = parseFloat(document.getElementById( "latitude" ).value);
+            var lat = latdeg * deg_to_rad;
+            var dec = jdedeg * deg_to_rad;
+            var ra = jradeg * deg_to_rad;
+            var HA = ( lst * 15 * Math.PI/180.0 ) - ra;
+            //    document.write( "Latitude: " + lat + "; Dec: " + dec + "; HA = " + HA );
+            var sindec = Math.sin( dec ); var cosdec = Math.cos( dec );
+            var sinlat = Math.sin( lat ); var coslat = Math.cos( lat );
+            var sinHA = Math.sin( HA ); var cosHA = Math.cos( HA );
+            var sinalt = sindec * sinlat + cosdec * coslat * cosHA;
+            var cosalt = Math.sqrt( 1 - sinalt*sinalt );
+            var sinaz = -sinHA * cosdec / cosalt;
+            var cosNorthAngle = ( sinlat - sinalt * sindec ) / ( cosalt * cosdec );
+            var northAngle = Math.acos( cosNorthAngle );
+            //    document.write( northAngle );
+            if( sinaz > 0 ) {
+                northAngle = -northAngle;
+            }
+            var alt = Math.asin( sinalt );
+            var transitH = -lst + precessed.radeg/15.0;
+            if (transitH < -12)
+                transitH += 24;
+            if (transitH > 12)
+                transitH -= 24;
+            var maxAltDeg = (90 - precessed.dedeg + latdeg);
+            if (maxAltDeg > 90)
+                maxAltDeg = 180 - maxAltDeg;
+            document.getElementById("posInfo").innerHTML = (
+                "Current Alt. " + Math.round(alt * 180/Math.PI) + "°&nbsp;&nbsp; Maximum Alt. " + Math.round(maxAltDeg) + "°&nbsp;&nbsp;" +
+                    (transitH > 0 ? ("Transits in " + transitH.toFixed(1) + "h") : ("Transited " + (-transitH).toFixed(1) + "h ago"))) + (alt > 0 ? (" with " + Math.round(100.0 * (1 - sinalt / Math.sin(maxAltDeg * Math.PI/180.0))) + "% less airmass") : "");
+	    let precessionOffset = precessionAngleOffset(precessed.rarad, precessed.derad, precessed_pole.rarad, precessed_pole.derad);
+            var rotation = northAngle - alt + Math.PI - precessionOffset;
+	    console.log('Precession correction: ' + precessionOffset.toFixed(4) + '°');
+            if( document.getElementById( "smallDob" ).checked )
+                rotation = rotation + 2 * Math.PI/3.0;
+            while (rotation >= 2 * Math.PI) {
+                rotation -= 2 * Math.PI;
+            }
+            while (rotation < 0) {
+                rotation += 2 * Math.PI;
+            }
+            let rotationSlider = document.getElementById("rotationSlider");
+            rotationSlider.value = Math.round(rotation*180/Math.PI);
+            rotationSlider.className = "";
+            updateCanvas();
+            if( document.getElementById( "autoUpdateCheck" ).checked )
+                window.setTimeout( calculate, 60000 ); // Update every minute
+        }
+
+        function fillGeolocation() {
+            var latitude = document.getElementById("latitude");
+            var longitude = document.getElementById("lon");
+            latitude.className += " attention";
+            longitude.className += " attention";
+            latitude.addEventListener("click", function(event) {latitude.className = "";});
+            longitude.addEventListener("click", function(event) {longitude.className = "";});
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    latitude.value = Math.round(position.coords.latitude);
+                    longitude.value = Math.round(position.coords.longitude);
+                    latitude.className = latitude.className.replace(" attention", "");
+                    longitude.className = longitude.className.replace(" attention", "");
+                });
+            }
+        }
+
+        function precessFromJ2000(jradeg, jdedeg, jd) {
+            j2000 = 2451545.0;
+
+            // Meeus Chapter 21
+            t = (jd - j2000)/36525; // Julian centuries
+
+            t2 = t * t;
+            t3 = t * t * t;
+
+            // Correction angles in arcseconds
+            zeta = 2306.2181 * t + 0.30188 * t2 + 0.017998 * t3;
+            z = 2306.2181 * t + 1.09468 * t2 + 0.018203 * t3;
+            theta = 2004.3109 * t - 0.42665 * t2 - 0.041833 * t3;
+
+            // Convert all angles to radian
+            ra0 = jradeg / rad_to_deg;
+            dec0 = jdedeg / rad_to_deg;
+            zeta = (zeta/3600.0) / rad_to_deg;
+            theta = (theta/3600.0) / rad_to_deg;
+            z = (z/3600.0) / rad_to_deg;
+
+            cosdec0 = Math.cos(dec0);
+            sindec0 = Math.sin(dec0);
+            sintheta = Math.sin(theta);
+            costheta = Math.cos(theta);
+            P = Math.cos(ra0 + zeta) * cosdec0;
+
+            A = cosdec0 * Math.sin(ra0 + zeta);
+            B = costheta * P - sintheta * sindec0;
+            sindec = sintheta * P + costheta * sindec0;
+            cosdec = Math.sqrt(A**2 + B**2);
+
+            ra = (z + Math.atan2(A, B));
+	    while ( ra < 0 ) {
+		ra += 2 * Math.PI;
+	    }
+	    while ( ra >= 2 * Math.PI) {
+		ra -= 2 * Math.PI;
+	    }
+            dec = Math.asin(sindec);
+            if (Math.abs(dec) > 89.0 / rad_to_deg) // Meeus suggests numerically better alternative
+                dec = Math.acos(cosdec);
+
+	    // ra0, dec0 -- ICRS coordinates
+	    // ra, dec -- JNow coordinates
+            return {
+                'radeg': ra * rad_to_deg,
+                'dedeg': dec * rad_to_deg,
+		'rarad': ra,
+		'derad': dec
+            };
+        }
+
+	function precessionAngleOffset(ra, dec, ra_pole, dec_pole) {
+	    // All inputs are in radian, output is in degrees
+	    
+            dRA = (ra_pole - ra);
+            sin_dRA = Math.sin(dRA);
+            cos_dRA = Math.cos(dRA);
+
+	    sin_dec = Math.sin(dec);
+	    cos_dec = Math.cos(dec);
+	    sin_decpole = Math.sin(dec_pole);
+	    cos_decpole = Math.cos(dec_pole);
+
+            precessionOffset = Math.atan2( // CCW +ve
+                sin_dRA * cos_decpole,
+                sin_decpole * cos_dec + sin_dec * cos_decpole * cos_dRA
+            );
+
+	    return precessionOffset * rad_to_deg;
+
+	}
+
+        function initialize() {
+            let canvas = document.getElementById('canvas')
+            canvas.addEventListener( 'mousedown', clickedPointUpdate, false );
+            canvas.addEventListener('DOMMouseScroll',handleScroll,false);
+            canvas.addEventListener('mousewheel',handleScroll,false);
+	    let go = function(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    document.getElementById('go').click();
+                }};
+            document.getElementById('objid').addEventListener("keyup", go);
+            document.getElementById('size').addEventListener("keyup", go);
+            let targetInput = document.getElementById('objid');
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            let queryId = urlParams.get('id');
+	    if (urlParams.get('size')) {
+		document.getElementById('size').value = parseInt(urlParams.get('size'));
+	    }
+	    if ((urlParams.get('lat') || urlParams.get('latitude')) && (urlParams.get('lon') || urlParams.get('longitude'))) {
+		let lat = urlParams.get('lat') ? urlParams.get('lat') : urlParams.get('latitude');
+		let lon = urlParams.get('lon') ? urlParams.get('lon') : urlParams.get('longitude');
+		document.getElementById('latitude').value = parseFloat(lat);
+		document.getElementById('lon').value = parseFloat(lon);
+	    } else {
+		fillGeolocation();
+	    }
+            if (queryId) {
+		queryId = queryId.replace(/^"/, "").replace(/"$/, "");
+                targetInput.value = queryId;
+                resolve();
+            } else {
+                targetInput.select();
+            }
+            if( document.getElementById('autoUpdateCheck').checked )
+                calculate();
+            else
+                updateCanvas();
+        }
+
+        var imagesize = 15;
+        var jrah = undefined, jdedeg = undefined, jradeg = undefined;
+        var dss_version = undefined;
+        function resolve() {
+	    clearAnnotations();
+            var objid = document.getElementById('objid').value;
+            var request = new XMLHttpRequest();
+            // var resolver_url = document.getElementById('resolver_url').value
+            let resolver_url = "https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oxp2/SVN?"; // FIXME
+	    let raTag = 'jradeg';
+	    let decTag = 'jdedeg';
+            const dss_version = document.getElementById('dss_version').value;
+	    if (dss_version == 7) {
+		resolver_url = "http://localhost:8080/?";
+		raTag = 'RA_J2000_Degrees';
+		decTag = 'Dec_J2000_Degrees';
+	    }
+            request.open('GET', resolver_url + objid, false);
+            request.send(null);
+            if (request.status != 200) {
+                window.alert('Could not reach resolver at ' + resolver_url + objid);
+            } else {
+                parser = new DOMParser();
+                var response = parser.parseFromString(request.responseText, 'text/xml')
+		if (!(response.getElementsByTagName(raTag)[0])) {
+		    window.alert("Error: failed to resolve the coordinates of the object requested. You should try speaking SIMBADese or NEDspeak");
+		    return;
+		}
+                jradeg = parseFloat(response.getElementsByTagName(raTag)[0].innerHTML);
+                jdedeg = parseFloat(response.getElementsByTagName(decTag)[0].innerHTML);
+                jrah = jradeg / 15.0;
+                imagesize = parseFloat(document.getElementById('size').value);
+                if (isNaN(imagesize) || imagesize == 0) {
+                    imagesize = 15.0;
+                }
+                if (imagesize > 75.0) {
+                    imagesize = 75.0;
+                }
+		const dss_img = document.getElementById('dss');
+                document.getElementById('go').disabled = true;
+		// FIXME: Refactor into body onload
+                dss_img.onload = function() {
+                    document.getElementById('go').disabled = false;
+		    coordMenu = document.getElementById("clickCoords");
+		    coordMenu.innerHTML = 'Click on image to place cross-hairs and perform operations at a location';
+                    if( document.getElementById('autoUpdateCheck').checked )
+                        calculate();
+                    else
+                        draw();
+                }
+		dss_img.onerror = function() {
+                    document.getElementById('go').disabled = false;
+		    coordMenu = document.getElementById("clickCoords");
+		    image = document.getElementById('dss');
+		    dss_url = image.src;
+		    window.alert("Error: Failed to retrieve image from " + dss_url + " -- Try a different survey, maybe?");
+		}
+                
+                let dss_url;
+                if( dss_version < 0 || dss_version > 7 )
+                    dss_version = 0;
+                dss_version_string = "poss2ukstu_blue";
+                if( dss_version == 1 )
+                    dss_version_string = "poss2ukstu_red";
+                if( dss_version == 2 )
+                    dss_version_string = "poss1_blue";
+                if( dss_version == 3 )
+                    dss_version_string = "poss1_red";
+                if( dss_version == 4 )
+                    dss_version_string = "Sloan";
+		if (dss_version == 5)
+		    dss_version_string = "Legacy DR10";
+		if (dss_version == 6)
+		    dss_version_string = "Legacy DR9";
+		if (dss_version == 7) {
+		    dss_version_string = "PanSTARRS-1";
+		    // PanSTARRS
+		    let panstarrs_size = (imagesize * 60 * 4).toFixed(0);
+		    let plate_fetcher_url = "https://ps1images.stsci.edu/cgi-bin/ps1filenames.py?ra=" + jradeg + "&dec=" + jdedeg + "&size=" + panstarrs_size + "&filters=gri";
+		    let plateFetcherRequest = new XMLHttpRequest();
+		    plateFetcherRequest.open('GET', plate_fetcher_url);
+		    plateFetcherRequest.responseType = 'text';
+		    plateFetcherRequest.overrideMimeType('text/plain');
+		    plateFetcherRequest.onload = function() {
+			if (plateFetcherRequest.readyState === plateFetcherRequest.DONE && plateFetcherRequest.status === 200) {
+
+			    // Convert ASCII table to JSON dict with a filter index
+			    var raw_data = [];
+			    plateFetcherRequest.responseText.split('\n').forEach(function(line) { raw_data.push(line.split(' ')); });
+			    let header = raw_data[0];
+			    var data = [];
+			    for (var row = 1; row < raw_data.length; ++row) {
+				var datum = {};
+				for (var col = 0; col < header.length; ++col) {
+				    datum[header[col]] = raw_data[row][col];
+				}
+				data.push(datum);
+			    }
+			    let filenamesByFilter = {}
+			    data.forEach(function(entry) {
+				filenamesByFilter[entry.filter] = entry.filename;
+			    });
+			    const rgb_bands = ['i', 'r', 'g'];
+			    let filenames = rgb_bands.map(filter => filenamesByFilter[filter]);
+			    let image_url = `https://ps1images.stsci.edu/cgi-bin/fitscut.cgi?ra=${jradeg}&dec=${jdedeg}&size=${panstarrs_size}&format=jpg&red=${filenames[0]}&green=${filenames[1]}&blue=${filenames[2]}`;
+
+			    if (!document.getElementById('highResCheck').checked)
+				image_url += '&output_size=2048';
+
+			    document.getElementById('dss').src = image_url;
+			} else {
+			    console.log("Response from server " + plate_fetcher_url + ":\n" +  plateFetcherRequest.responseText);
+			    window.alert("Failed to parse the response from the PanSTARRS plate-filename script! Response logged to console.");
+			}
+		    }
+		    plateFetcherRequest.onerror = function(event) {
+			window.alert("Failed to reach the PanSTARRS filename script: " + event.message);
+		    }
+		    plateFetcherRequest.send();
+		}
+
+                let dss_credit;
+                if (dss_version < 4) {
+                    dss_url = "https://archive.stsci.edu/cgi-bin/dss_search?v=" + dss_version_string  + '&f=gif&r=' + jradeg + '&d=' + jdedeg + '&w=' + imagesize.toFixed(3) + '&h=' + imagesize.toFixed(3);
+                    dss_credit = 'Image from DSS / MAST / STScI. For usage policy look <a href="https://archive.stsci.edu/dss/acknowledging.html">here</a> and <a href="https://archive.stsci.edu/data_use.html">here</a>.';
+                } else if (dss_version == 4) {
+                    dss_url = "https://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?ra=" + jradeg + "&dec=" + jdedeg + "&scale=1&width=" + (imagesize * 60).toFixed(0) + "&height=" + (imagesize * 60).toFixed(0);
+                    dss_credit = 'Image from <a href=https://skyserver.sdss.org/dr16">Sloan Digital Sky Survey DR16</a>.';
+                } else if (dss_version == 5) {
+		    dss_url = "https://www.legacysurvey.org/viewer/jpeg-cutout?ra=" + jradeg + "&dec=" + jdedeg + "&layer=ls-dr9&pixscale=1&height=" + (imagesize * 60).toFixed(0) + "&width=" + (imagesize * 60).toFixed(0);
+                    dss_credit = 'Image from <a href=https://www.legacysurvey.org/">DESI Legacy Imaging Surveys</a>.';
+                } else if (dss_version == 6) {
+		    dss_url = "https://www.legacysurvey.org/viewer/jpeg-cutout?ra=" + jradeg + "&dec=" + jdedeg + "&layer=ls-dr10&pixscale=1&height=" + (imagesize * 60).toFixed(0) + "&width=" + (imagesize * 60).toFixed(0);
+                    dss_credit = 'Image from <a href=https://www.legacysurvey.org/">DESI Legacy Imaging Surveys</a>.';
+		} else if (dss_version == 7) {
+		    dss_url = null;
+		    dss_credit = 'Image from <a href="https://outerspace.stsci.edu/display/PANSTARRS/Pan-STARRS1+data+archive+home+page">PanSTARRS-1</a> survey.';
+		} else if (dss_version == 8) {
+		    dss_url = `http://localhost:8888/?r=${jradeg}&d=${jdedeg}&w=${imagesize.toFixed(3)}&h=${imagesize.toFixed(3)}&f=gif`;
+		    dss_credit = 'Image from whatever service you are running at localhost:8888.';
+		}
+		if (dss_version != 6) {
+                    document.getElementById('dss').src = dss_url
+		}
+                document.getElementById('imageInfo').innerHTML = (
+                    "Image FOV: " + imagesize.toFixed(0) + "×" + imagesize.toFixed(0) + " arcmin; DSS Version: " + dss_version_string + "<br />" +
+                        "Image Center (J2000): " + getXMSString(jrah) + "&nbsp;&nbsp;" + getXMSString(jdedeg) + " (" + (jrah * 15.0).toString() + ", "  + jdedeg.toString() + ") <br />" +
+                        dss_credit + "<br />"
+                );
+            }
+        }
+
+        function resetZoom() {
+            zoomAffine.x = 0; zoomAffine.y = 0;document.getElementById('zoom').value = 1.0; draw();
+        }
+
+	function clearAnnotations() {
+	    /*
+	      document.getElementById('fov').value = 0; delete window.clickX; delete window.clickY; 
+	      document.getElementById('northCheck').checked = false;
+	    */
+	    objects = []; annotations=[]; clickedObject = undefined; clickedObjDistance = undefined;
+	}
+        
+        </script>
+
+      <style type="text/css">
+        a:link {
+            color: #ef1010;
+        }
+        a:visited {
+            color: #bf2020;
+        }
+        a:hover {
+            color: hotpink;
+        }
+        a:active {
+            color:red;
+        }
+      </style>
+    <script src="/assets/js/bas-theme.js"></script>
+    <link rel="stylesheet" href="/assets/css/bas-site.css">
+</head>
+  <body style="color: white; background: black;" class="bas-page bas-page--dark-tool" onLoad="initialize()">
+<!-- BAS_GLOBAL_NAV_START -->
+<nav class="bas-site-nav" aria-label="BAS site sections">
+  <div class="bas-site-nav__inner">
+    <a class="bas-site-nav__brand" href="/">Bangalore Astronomical Society</a>
+    <div class="bas-site-nav__links">
+      <a href="/">Home</a>
+      <a href="/events/">Events</a>
+      <a href="/tools/" aria-current="page">Tools</a>
+      <a href="/policy/">Policy</a>
+      <a href="/historic/">Historic</a>
+      <a href="/pages/">Pages</a>
+      <a href="/gallery/">Gallery</a>
+      <a href="/blogs/">Blogs</a>
+    </div>
+    <button class="bas-theme-toggle" type="button" data-bas-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode"><span class="bas-theme-toggle__icon" aria-hidden="true">&#9790;</span></button>
+  </div>
+</nav>
+<!-- BAS_GLOBAL_NAV_END -->
+<main class="bas-page__main">
+
+    <img src="" style="display:none" id="dss"/>
+    <div class="container-info" id="canvas_bearer">
+      <canvas style="background: black;" id="canvas"></canvas>
+      <input id="resetZoomToolbarButton" type="button" style="position: absolute; top: 0; left: 0; background: black; color: white; outline: none;" value="↺" onClick="resetZoom();"/>
+      <input id="leftButton" type="button" style="position: absolute; top: 0; left: 0; background: black; color: white; outline: none;" value="↺" onClick="resetZoom();"/>
+      <br />
+      <div id='clickCoords'>Click on image to place cross-hairs and perform operations at a location</div>
+      <br />
+      <div id='clickObj'></div><br />
+      <div id="imageInfo" class="suppress">
+      </div>
+    </div>
+    <div class="container-main">
+      <form>
+        <strong>Step 1: Choose target and sky survey</strong><br />
+        Target:&nbsp;<input id='objid' name='id' value="" placeholder="e.g. PGC 86395 or 03:27:27 -13:26:23" autofocus />&nbsp; &nbsp;
+	Survey: <select id="dss_version" name="version">
+        <option value="0" checked >POSS II Blue</option>
+        <option value="1">POSS II Red</option>
+        <option value="2">POSS I Blue</option>
+        <option value="3">POSS I Red</option>
+        <option value="4">SDSS Vis</option>
+        <option value="5">Legacy</option>
+        <option value="6">PanSTARRS-1</option>
+        <option value="7" style="gray">[EXPERT] local servers</option>
+	</select>
+        <input type='button' value='Go!' id='go' onClick='resolve(); updateCanvas();' /><br />
+        Size: <input type="number" min="15" max="75" style="width:60px" name="size" id="size" value="15" /> arcmin<br />
+	High Res: <input id="highResCheck" type="checkbox" name="highRes" value="0" title="Check this to force downloading high-res images for modern surveys, which will be slow"/><br />
+        <hr/>
+
+        <strong>Step 2: Setup automatic adjustment of orientation as seen in eyepiece</strong><br />
+        <p style="width:600px;" class="suppress">Warning: With POSS I, orientation will not be correct near the poles. Use POSSII instead.</p>
+        Type of Dobsonian: <input id="smallDob" name="dobType" type="radio" value="1"/> Small
+        <input id="bigDob" type="radio" name="dobType" value="0" checked /> Big <br />
+        <br />
+        <b>Observer's Latitude</b> (negative for South): <input id="latitude" name="latitude" type="number" min="-90" max="90" step="any" style="width:100px;"
+                                                                value="36"/>°<br />
+        <b>Observer's Longitude</b> (negative for West): <input id="lon" name="lon" type="number" min="-180" max="180" step="any" style="width:100px;"
+                                                                value="-120" />°<br />
+        <input id="calcButton" type="button" value="Adjust orientation!" onclick="calculate()" />
+        <input id="autoUpdateCheck" type="checkbox" name="autoUpdate" value="1" checked onclick="calculate()" /> Auto-update
+        <br />
+        <br />
+        <u>Computed Information:</u><br />
+        Local Sidereal Time now: <label id="lst" name="lst">Not calculated</label><br />
+        <div id="posInfo">Not yet calculated</div>
+        <div id="data" class="suppress">
+          LT: <label id="lt" name="lt">Unknown</label>&nbsp;&nbsp;
+          UT: <label id="ut" name="ut">Unknown</label>&nbsp;&nbsp;
+          JD: <label id="jd" name="jd">Unknown</label>&nbsp;&nbsp;<br />
+          Precessed (JNow): <label id="currentCoords" name="currentCoords">Not calculated</label><br />
+        </div>
+        <div>
+          <p style="width:600px;" class="suppress">
+            LST calculator script courtesy of <a href="https://www.iiap.res.in/people/personnel/reks/index.php">Rekhesh Mohan</a>; used with permission.
+          </p>
+        </div>
+        <hr />
+        <strong>Step 2 Alt: Alternatively, adjust orientation manually</strong><br />
+        <input id="flipCheck" name="flipCheck" type="checkbox" value="1" onchange="draw()"/> Flip Image &nbsp; &nbsp;
+        Rotation: <input id="rotationSlider" type="number" min="-360" step="any"
+                         max="360" onchange="this.className='changed'; draw()" style="width:80px"; />°
+        <hr />
+        <strong>Step 3: Adjust appearance and annotate</strong><br />
+        <input id="invertCheck" name="invertCheck" type="checkbox" value="1" onchange="draw()" /> Invert Colors <br />
+        Zoom Factor: <input id="zoom" type="number" min="0.1" max="10" step="0.1" value="1" onchange="draw()" style="width:100px" />
+        <input id="resetZoomButton" type="button" value="Reset" onClick="resetZoom();" />&nbsp; &nbsp;
+        Contrast: <input id="contrast" type="number" min="-100" max="100" step="1" value="0" onchange="draw()" style="width:80px" />
+        Brightness: <input id="brightness" type="number" min="-100" max="900" step="10" value="0" onchange="draw()" style="width:80px" /> <br />
+	Annotation font size: <input id="annotFontSize" type="number" min="3" max="64" step="1" value="24" onchange="draw();" style="width:60px" />px<br />
+    Add FOV circle: <input style="width:80px" id="fov" type="number" min="0" max="120" step="1" value="0" onchange="draw()" /> arcmin &nbsp; <input id="northCheck" type="checkbox" value="1" checked onchange="draw()" /> Mark north &nbsp;
+    <input id="plotObjectButton" type="button" value="Plot Object by RA/Dec" onclick="annotate_radec();" /><br />
+        <input id="clearAnnotationsButton" type="button" value="Clear Annotations" onclick="clearAnnotations(); draw();" /><br /> <!-- FIXME: Refactor onClick into method -->
+        <div class="suppress">
+          Tip: Click on the image to place cross-hairs / run SIMBAD coordinate query.<br />
+          Tip: Right-click on image and open in new tab to save with your annotations.<br />
+        </div>
+        <hr />
+      </form>
+    </div>
+
+</main>
+</body>
+</html>
