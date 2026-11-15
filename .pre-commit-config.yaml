@@ -1,7 +1,9 @@
 # Run before each commit, and in CI (.github/workflows/checks.yml).
 # Setup and use: README.md, "Checks".
-# Vendored third-party assets are not checked.
-exclude: ^public/(bootstrap|font-awesome-4\.7\.0)/
+# Vendored third-party assets are not checked. Nor are the archived
+# subsites (historic, pages, policy, tools): they are kept as imported,
+# so the checks do not rewrite or reject their legacy markup.
+exclude: ^public/(bootstrap|font-awesome-4\.7\.0|historic|pages|policy|tools)/
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0

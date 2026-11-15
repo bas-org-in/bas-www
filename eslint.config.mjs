@@ -3,8 +3,16 @@ import globals from "globals";
 
 export default [
   {
-    // Vendored third-party assets.
-    ignores: ["public/bootstrap/**", "public/font-awesome-4.7.0/**", "node_modules/**"],
+    // Vendored third-party assets, and the archived subsites kept as imported.
+    ignores: [
+      "public/bootstrap/**",
+      "public/font-awesome-4.7.0/**",
+      "public/historic/**",
+      "public/pages/**",
+      "public/policy/**",
+      "public/tools/**",
+      "node_modules/**",
+    ],
   },
   js.configs.recommended,
   {

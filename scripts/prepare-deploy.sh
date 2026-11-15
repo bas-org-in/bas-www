@@ -43,6 +43,14 @@ if [ "$include_large_pdfs" = "0" ]; then
     "$deploy_root/files/BASWinterChallenge.pdf"
 fi
 
+# The archived subsites never deployed their PDFs; the live site has none
+# there. Keep it that way, so a deploy does not add files to /historic/.
+for site in historic pages policy tools; do
+  if [ -d "$deploy_root/$site" ]; then
+    find "$deploy_root/$site" -type f -iname '*.pdf' -delete
+  fi
+done
+
 copy_dir() {
   local src="$1"
   local dest="$2"

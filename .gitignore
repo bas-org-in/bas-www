@@ -1,6 +1,11 @@
 /public/bootstrap/
 /public/font-awesome-4.7.0/
 /node_modules/
+# Third-party files of the archived subsites. The deploy does not upload
+# them; they stay on the server, from install-vendor.sh of bas-site-ops.
+/public/pages/assets/fonts/
+/public/pages/assets/js/respond.js
+/public/tools/logbooks/bootstrap/
 
 # Large media pending an explicit Git LFS or external storage decision.
 /public/files/BASWinterAdvanced.pdf

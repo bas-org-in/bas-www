@@ -2,6 +2,10 @@
   "ignoreFiles": [
     "public/bootstrap/**",
     "public/font-awesome-4.7.0/**",
+    "public/historic/**",
+    "public/pages/**",
+    "public/policy/**",
+    "public/tools/**",
     "node_modules/**"
   ],
   "extends": [
