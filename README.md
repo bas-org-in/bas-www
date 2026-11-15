@@ -6,7 +6,12 @@ up with `docs/workspace.md` in the repository `bas-org-in/bas-site-ops`.
 Curated static source for the main Bangalore Astronomical Society website,
 served at `https://bas.org.in/`.
 
-See `import.md` for source provenance notes.
+The former subdomain sites are folders of `public/`: `historic/`,
+`pages/`, `policy/` and `tools/`, served at `/historic/`, `/pages/`,
+`/policy/` and `/tools/`. They are archived pages, kept as imported.
+
+See `import.md` for source provenance notes, and `docs/import/` for those
+of the subsites.
 
 ## Deployment
 
@@ -42,7 +47,9 @@ a change reaches the live site:
   shadows and spacing outside `tokens.css`. A second check rejects `<style>`
   blocks and `style=` attributes in HTML, include and PHP files.
 
-The checks skip the vendored Bootstrap and Font Awesome folders.
+The checks skip the vendored Bootstrap and Font Awesome folders and the
+archived subsite folders. `.gitleaksignore` lists the gitleaks findings in
+the archived pages that are not secrets.
 
 You need [Node.js](https://nodejs.org/) 22 and
 [uv](https://docs.astral.sh/uv/getting-started/installation/).
