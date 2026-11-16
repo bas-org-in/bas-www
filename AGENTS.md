@@ -13,7 +13,9 @@ the checks and the deployment.
   `public/assets/css/tokens.css`. Other stylesheets use only `var(--bas-...)`.
 - Deploy only through the guarded workflow in `docs/deployment.md`.
 - `public/historic/`, `public/pages/`, `public/policy/` and `public/tools/`
-  are archived pages of the former subdomain sites. The checks skip them.
+  are archived pages of the former subdomain sites. The checks skip them,
+  except the navigation bar check: every page includes the shared bar
+  (README, "Navigation Bar").
   Change only what a pull request is for, and record renamed or removed
   files in `docs/import/<site>.md`. Do not commit their third-party files;
   `.gitignore` lists them.

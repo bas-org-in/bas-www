@@ -6,8 +6,8 @@
 # Usage: tests/serve-local.sh DEPLOY_ROOT [PORT]
 #
 # BAS_PLUGIN_SOURCE names another plugin folder, for example in a worktree.
-# BAS_VENDOR_SOURCE is passed to prepare-deploy.sh. The Python server does
-# not run server-side includes.
+# BAS_VENDOR_SOURCE is passed to prepare-deploy.sh. tests/ssi-server.py
+# runs the server-side includes of the static pages, as the live server does.
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -21,4 +21,4 @@ mkdir -p "$plugin_dest/assets"
 cp "$plugin_src/lightbox.js" "$plugin_src/article-lightbox.js" "$plugin_dest/"
 cp "$plugin_src/assets/bas-lightbox.css" "$plugin_dest/assets/"
 
-exec python3 -m http.server "$port" --bind 127.0.0.1 --directory "$deploy_root"
+exec python3 -I "$repo_root/tests/ssi-server.py" "$deploy_root" "$port"
