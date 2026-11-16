@@ -48,8 +48,8 @@ page includes it with server-side includes (SSI) between its
 The value is the page's first folder, or `home` for the home page. A new
 page copies these two lines. The server runs them (the root `.htaccess`
 rule SA-36 in `bas-site-ops`). `tests/serve-local.sh` runs them too; a
-page opened straight from disk has no bar. The WordPress child theme has
-its own copy of the bar.
+page opened straight from disk has no bar. The WordPress child theme and
+the content of the gallery page have their own copies (ST-78).
 
 ## Checks
 
