@@ -51,6 +51,15 @@ The WordPress theme and gallery plugin load both files from
 `https://bas.org.in/assets/` at run time. Deploy a token rename together
 with the WordPress code that uses it.
 
+## Navigation Bar
+
+The static pages include the navigation bar from `includes/global-nav.html`
+with server-side includes (README, "Navigation Bar"). The server runs them
+only when the root `.htaccess` has the SA-36 rule of `bas-site-ops`
+(`wordpress/gateway/root-wordpress.htaccess`). The workflow checks for the
+rule before it syncs: a live deploy stops without it, and a dry run gives a
+warning.
+
 ## Preserved Remote Paths
 
 The sync does not use `rsync --delete`. It also excludes cPanel-managed paths:
