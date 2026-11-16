@@ -32,6 +32,25 @@ token only together with them.
 To add a value, add a token to `tokens.css` first, with a comment that
 gives its role, then use the token.
 
+## Navigation Bar
+
+The navigation bar of the static pages is in one file,
+`public/includes/global-nav.html` (ST-88 in `bas-site-ops`
+`docs/style-system.md`). To change a link, change only that file. Each
+page includes it with server-side includes (SSI) between its
+`BAS_GLOBAL_NAV_START` and `BAS_GLOBAL_NAV_END` markers:
+
+```html
+<!--#set var="BAS_NAV_CURRENT" value="historic" -->
+<!--#include virtual="/includes/global-nav.html" -->
+```
+
+The value is the page's first folder, or `home` for the home page. A new
+page copies these two lines. The server runs them (the root `.htaccess`
+rule SA-36 in `bas-site-ops`). `tests/serve-local.sh` runs them too; a
+page opened straight from disk has no bar. The WordPress child theme has
+its own copy of the bar.
+
 ## Checks
 
 Checks run before each commit, as pre-commit hooks, and in CI on each push
@@ -46,8 +65,10 @@ a change reaches the live site:
 - Styles: stylelint rejects raw colours and raw font sizes, weights, radii,
   shadows and spacing outside `tokens.css`. A second check rejects `<style>`
   blocks and `style=` attributes in HTML, include and PHP files.
+- Navigation bar: `tests/shared-nav.py` checks that every page, the
+  archived ones included, takes the bar from the shared file (ST-88).
 
-The checks skip the vendored Bootstrap and Font Awesome folders and the
+The other checks skip the vendored Bootstrap and Font Awesome folders and the
 archived subsite folders. `.gitleaksignore` lists the gitleaks findings in
 the archived pages that are not secrets.
 

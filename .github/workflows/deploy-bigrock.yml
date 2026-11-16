@@ -105,6 +105,24 @@ jobs:
             "$REMOTE_USER@$REMOTE_HOST" \
             'test -d public_html && test -d "$HOME"'
 
+          # The static pages include the navigation bar with SSI (ST-88).
+          # Without the SA-36 rule in the root .htaccess, they show no bar.
+          remote_path="${REMOTE_PATH%/}"
+          if ! ssh \
+            -i "$HOME/.ssh/bas_bigrock_deploy" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            "$REMOTE_USER@$REMOTE_HOST" \
+            "grep -q '^AddOutputFilter INCLUDES .html .htm' '$remote_path/.htaccess'"; then
+            if [ "$DEPLOY_DRY_RUN" = "1" ]; then
+              echo "::warning::The root .htaccess has no SSI rule (SA-36). A live deploy stops here."
+            else
+              echo "::error::The root .htaccess has no SSI rule (SA-36). Add it before a live deploy."
+              exit 1
+            fi
+          fi
+
       - name: Sync site
         shell: bash
         run: |

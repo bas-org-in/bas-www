@@ -56,3 +56,10 @@ repos:
         language: system
         entry: node scripts/check-inline-styles.mjs
         files: \.(html?|inc|php)$
+      # Runs on all pages, the archived subsites included (ST-88).
+      - id: shared-nav
+        name: pages include the shared navigation bar
+        language: system
+        entry: python3 -I tests/shared-nav.py public
+        pass_filenames: false
+        always_run: true

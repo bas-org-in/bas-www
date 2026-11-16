@@ -1,0 +1,19 @@
+<!-- The navigation bar of the static pages (ST-78, ST-88 in bas-site-ops
+     docs/style-system.md). Pages include this file with SSI and set
+     BAS_NAV_CURRENT to their section. -->
+<nav class="bas-site-nav" aria-label="BAS site sections">
+  <div class="bas-site-nav__inner">
+    <a class="bas-site-nav__brand" href="/">Bangalore Astronomical Society</a>
+    <div class="bas-site-nav__links">
+      <a href="/"<!--#if expr="$BAS_NAV_CURRENT = home" --> aria-current="page"<!--#endif -->>Home</a>
+      <a href="/events/"<!--#if expr="$BAS_NAV_CURRENT = events" --> aria-current="page"<!--#endif -->>Events</a>
+      <a href="/tools/"<!--#if expr="$BAS_NAV_CURRENT = tools" --> aria-current="page"<!--#endif -->>Tools</a>
+      <a href="/policy/"<!--#if expr="$BAS_NAV_CURRENT = policy" --> aria-current="page"<!--#endif -->>Policy</a>
+      <a href="/historic/"<!--#if expr="$BAS_NAV_CURRENT = historic" --> aria-current="page"<!--#endif -->>Historic</a>
+      <a href="/pages/"<!--#if expr="$BAS_NAV_CURRENT = pages" --> aria-current="page"<!--#endif -->>Pages</a>
+      <a href="/gallery/"<!--#if expr="$BAS_NAV_CURRENT = gallery" --> aria-current="page"<!--#endif -->>Gallery</a>
+      <a href="/blogs/"<!--#if expr="$BAS_NAV_CURRENT = blogs" --> aria-current="page"<!--#endif -->>Blogs</a>
+    </div>
+    <button class="bas-theme-toggle" type="button" data-bas-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode"><span class="bas-theme-toggle__icon" aria-hidden="true">&#9790;</span></button>
+  </div>
+</nav>
